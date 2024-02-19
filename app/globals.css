@@ -1,0 +1,52 @@
+:root {
+    --white: white;
+}
+
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    position: relative;
+}
+
+html,
+body {
+    overflow: hidden;
+    font-size: 12px;
+}
+
+:is(main, .outerframe) {
+    background-color: var(--white);
+    width: 100vw;
+    height: 100svh;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+:is(main, .outerframe) .frame {
+    background-color: black;
+    flex-grow: 1;
+}
+
+:is(main, .outerframe) .description {
+    height: 3rem;
+    display: flex;
+}
+
+:is(main, .outerframe) .description * {
+    height: 100%;
+}
+
+:is(main, .outerframe) .description .left {
+    flex-grow: 1;
+}
+
+/* Nav */
+nav {
+    position: fixed;
+    z-index: 10;
+    left: 0;
+    top: 0;
+}
