@@ -11,7 +11,7 @@ export const PageFrame = ({
 }) => {
     return (
         <>
-            <section className="frame">{children}</section>
+            <section className="image">{children}</section>
             <section className="description">
                 <span className="left">{pgName}</span>
                 <span className="right">{date}</span>

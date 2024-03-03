@@ -1,5 +1,10 @@
 :root {
-    --white: white;
+    --white: #fffefc;
+    --offwhite: #efebd6;
+    --left_offset_polaroid: 2rem;
+    --padding_polaroid: 1rem;
+    --nav_gap: 4.8rem;
+    --nav_left_offset: max(8vw, 8rem);
 }
 
 * {
@@ -15,31 +20,57 @@ body {
     font-size: 12px;
 }
 
-:is(main, .outerframe) {
+:is(main, .polaroid .outer) {
     background-color: var(--white);
     width: 100vw;
     height: 100svh;
-    padding: 1rem;
+    padding: var(--padding_polaroid);
     display: flex;
     flex-direction: column;
-    gap: 0.3rem;
+    gap: var(--padding_polaroid);
+    border-radius: 0.3rem;
+    box-shadow: 0px 10px 7px -4px rgba(0, 0, 0, 0.07);
 }
 
-:is(main, .outerframe) .frame {
-    background-color: black;
-    flex-grow: 1;
+:is(main, .polaroid .outer) .image {
+    background-color: var(--offwhite);
+    margin-top: 0.5rem;
+    aspect-ratio: 1;
+    flex-grow: 2;
 }
 
-:is(main, .outerframe) .description {
-    height: 3rem;
+:is(main, .polaroid .outer) .image::after {
+    content: '';
+    position: absolute;
+    bottom: calc(0px - var(--padding_polaroid));
+    left: calc(0px - var(--padding_polaroid));
+    width: calc(100% + var(--padding_polaroid) * 2);
+    height: var(--padding_polaroid);
+    background: linear-gradient(
+            90deg,
+            var(--white) 0%,
+            transparent 50%,
+            var(--white) 100%
+        ),
+        linear-gradient(0deg, rgba(0, 0, 0, 0.07) 0%, transparent 70%);
+}
+
+:is(main, .polaroid .outer) .image::before {
+    content: '';
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    box-shadow: inset 5px 5px 7px -4px rgba(0, 0, 0, 0.07);
+}
+
+:is(main, .polaroid .outer) .description {
+    height: 2.5rem;
     display: flex;
 }
 
-:is(main, .outerframe) .description * {
-    height: 100%;
-}
-
-:is(main, .outerframe) .description .left {
+:is(main, .polaroid .outer) .description .left {
     flex-grow: 1;
 }
 
@@ -47,6 +78,41 @@ body {
 nav {
     position: fixed;
     z-index: 10;
-    left: 0;
     top: 0;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    pointer-events: none;
+}
+
+nav > section {
+    left: var(--nav_left_offset);
+    top: -5rem;
+}
+
+nav .polaroid {
+    height: fit-content;
+    position: relative;
+    height: var(--nav_gap);
+}
+
+nav .polaroid .outer {
+    height: fit-content;
+    width: 15rem;
+    aspect-ratio: 3.5/4.2;
+    position: relative;
+    transition: transform 0.5s;
+    pointer-events: auto;
+    transform-origin: bottom right;
+}
+
+nav .nested {
+    position: relative;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    nav .polaroid .outer:hover {
+        transform: rotate(-20deg);
+    }
 }
