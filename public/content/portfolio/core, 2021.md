@@ -1,3 +1,5 @@
+version 1
+
 # h1 Heading 8-)
 
 ## h2 Heading
@@ -10,7 +12,7 @@
 
 ###### h6 Heading
 
-Alternatively, for H1 and H2, an underline-ish style:
+version 2
 
 # Alt-H1
 
