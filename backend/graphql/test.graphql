@@ -1,0 +1,11 @@
+{
+    repository(owner: "vanghoa", name: "victoria-hertel-site") {
+        issues(last: 3) {
+            edges {
+                node {
+                    title
+                }
+            }
+        }
+    }
+}

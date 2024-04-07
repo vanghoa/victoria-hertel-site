@@ -21,7 +21,9 @@ body {
 }
 
 :is(main, .polaroid .outer) {
+    background: url('/assets/pattern.png');
     background-color: var(--white);
+    background-size: 5rem;
     width: 100vw;
     height: 100svh;
     padding: var(--padding_polaroid);
@@ -46,13 +48,14 @@ body {
     left: calc(0px - var(--padding_polaroid));
     width: calc(100% + var(--padding_polaroid) * 2);
     height: var(--padding_polaroid);
+    mix-blend-mode: darken;
     background: linear-gradient(
             90deg,
             var(--white) 0%,
             transparent 50%,
             var(--white) 100%
         ),
-        linear-gradient(0deg, rgba(0, 0, 0, 0.07) 0%, transparent 70%);
+        linear-gradient(0deg, rgba(0, 0, 0, 0.08) 0%, transparent 70%);
 }
 
 :is(main, .polaroid .outer) .image::before {
@@ -62,7 +65,8 @@ body {
     position: absolute;
     left: 0;
     top: 0;
-    box-shadow: inset 5px 5px 7px -4px rgba(0, 0, 0, 0.07);
+    box-shadow: inset 5px 5px 7px -4px rgba(0, 0, 0, 0.07),
+        inset -1px -1px 0.5px 0px rgba(0, 0, 0, 0.1);
 }
 
 :is(main, .polaroid .outer) .description {
@@ -102,7 +106,6 @@ nav .polaroid .outer {
     width: 15rem;
     aspect-ratio: 3.5/4.2;
     position: relative;
-    transition: transform 0.5s;
     pointer-events: auto;
     transform-origin: bottom right;
 }
