@@ -1,0 +1,177 @@
+[
+    {
+        "sha": "296e4a8ec414591c5af97c740e5b3cdd92c0bfd4",
+        "node_id": "C_kwDOLUtw09oAKDI5NmU0YThlYzQxNDU5MWM1YWY5N2M3NDBlNWIzY2RkOTJjMGJmZDQ",
+        "commit": {
+            "author": {
+                "name": "Bao Anh Bui",
+                "email": "bao@tusitalabooks.com",
+                "date": "2024-04-07T13:41:18Z"
+            },
+            "committer": {
+                "name": "Bao Anh Bui",
+                "email": "bao@tusitalabooks.com",
+                "date": "2024-04-07T13:41:18Z"
+            },
+            "message": "version 3",
+            "tree": {
+                "sha": "4fb0868e62fc9df71ce9f0045d27b4a525a821a7",
+                "url": "https://api.github.com/repos/vanghoa/victoria-hertel-site/git/trees/4fb0868e62fc9df71ce9f0045d27b4a525a821a7"
+            },
+            "url": "https://api.github.com/repos/vanghoa/victoria-hertel-site/git/commits/296e4a8ec414591c5af97c740e5b3cdd92c0bfd4",
+            "comment_count": 0,
+            "verification": {
+                "verified": false,
+                "reason": "unsigned",
+                "signature": null,
+                "payload": null
+            }
+        },
+        "url": "https://api.github.com/repos/vanghoa/victoria-hertel-site/commits/296e4a8ec414591c5af97c740e5b3cdd92c0bfd4",
+        "html_url": "https://github.com/vanghoa/victoria-hertel-site/commit/296e4a8ec414591c5af97c740e5b3cdd92c0bfd4",
+        "comments_url": "https://api.github.com/repos/vanghoa/victoria-hertel-site/commits/296e4a8ec414591c5af97c740e5b3cdd92c0bfd4/comments",
+        "author": null,
+        "committer": null,
+        "parents": [
+            {
+                "sha": "5a8fbce908918cf445e38bedba860b2948344a1c",
+                "url": "https://api.github.com/repos/vanghoa/victoria-hertel-site/commits/5a8fbce908918cf445e38bedba860b2948344a1c",
+                "html_url": "https://github.com/vanghoa/victoria-hertel-site/commit/5a8fbce908918cf445e38bedba860b2948344a1c"
+            }
+        ],
+        "stats": { "total": 192, "additions": 168, "deletions": 24 },
+        "files": [
+            {
+                "sha": "851b486a8565a77330fc4ba9ebb7711ddcee545b",
+                "filename": ".gitignore",
+                "status": "modified",
+                "additions": 2,
+                "deletions": 0,
+                "changes": 2,
+                "blob_url": "https://github.com/vanghoa/victoria-hertel-site/blob/296e4a8ec414591c5af97c740e5b3cdd92c0bfd4/.gitignore",
+                "raw_url": "https://github.com/vanghoa/victoria-hertel-site/raw/296e4a8ec414591c5af97c740e5b3cdd92c0bfd4/.gitignore",
+                "contents_url": "https://api.github.com/repos/vanghoa/victoria-hertel-site/contents/.gitignore?ref=296e4a8ec414591c5af97c740e5b3cdd92c0bfd4",
+                "patch": "@@ -34,3 +34,5 @@ yarn-error.log*\n # typescript\n *.tsbuildinfo\n next-env.d.ts\n+\n+*.env\n\\ No newline at end of file"
+            },
+            {
+                "sha": "cbf055a6033f6259a65453412e32d4e6c9ee250c",
+                "filename": "app/[slug]/page.tsx",
+                "status": "added",
+                "additions": 5,
+                "deletions": 0,
+                "changes": 5,
+                "blob_url": "https://github.com/vanghoa/victoria-hertel-site/blob/296e4a8ec414591c5af97c740e5b3cdd92c0bfd4/app%2F%5Bslug%5D%2Fpage.tsx",
+                "raw_url": "https://github.com/vanghoa/victoria-hertel-site/raw/296e4a8ec414591c5af97c740e5b3cdd92c0bfd4/app%2F%5Bslug%5D%2Fpage.tsx",
+                "contents_url": "https://api.github.com/repos/vanghoa/victoria-hertel-site/contents/app%2F%5Bslug%5D%2Fpage.tsx?ref=296e4a8ec414591c5af97c740e5b3cdd92c0bfd4",
+                "patch": "@@ -0,0 +1,5 @@\n+import { PageFrame } from '@/components/PageFrame';\n+\n+export default function Home() {\n+    return <PageFrame>n</PageFrame>;\n+}"
+            },
+            {
+                "sha": "f52f8f17967d67b8b00872f175ae6cfed2f7f955",
+                "filename": "app/globals.css",
+                "status": "modified",
+                "additions": 6,
+                "deletions": 3,
+                "changes": 9,
+                "blob_url": "https://github.com/vanghoa/victoria-hertel-site/blob/296e4a8ec414591c5af97c740e5b3cdd92c0bfd4/app%2Fglobals.css",
+                "raw_url": "https://github.com/vanghoa/victoria-hertel-site/raw/296e4a8ec414591c5af97c740e5b3cdd92c0bfd4/app%2Fglobals.css",
+                "contents_url": "https://api.github.com/repos/vanghoa/victoria-hertel-site/contents/app%2Fglobals.css?ref=296e4a8ec414591c5af97c740e5b3cdd92c0bfd4",
+                "patch": "@@ -21,7 +21,9 @@ body {\n }\n \n :is(main, .polaroid .outer) {\n+    background: url('/assets/pattern.png');\n     background-color: var(--white);\n+    background-size: 5rem;\n     width: 100vw;\n     height: 100svh;\n     padding: var(--padding_polaroid);\n@@ -46,13 +48,14 @@ body {\n     left: calc(0px - var(--padding_polaroid));\n     width: calc(100% + var(--padding_polaroid) * 2);\n     height: var(--padding_polaroid);\n+    mix-blend-mode: darken;\n     background: linear-gradient(\n             90deg,\n             var(--white) 0%,\n             transparent 50%,\n             var(--white) 100%\n         ),\n-        linear-gradient(0deg, rgba(0, 0, 0, 0.07) 0%, transparent 70%);\n+        linear-gradient(0deg, rgba(0, 0, 0, 0.08) 0%, transparent 70%);\n }\n \n :is(main, .polaroid .outer) .image::before {\n@@ -62,7 +65,8 @@ body {\n     position: absolute;\n     left: 0;\n     top: 0;\n-    box-shadow: inset 5px 5px 7px -4px rgba(0, 0, 0, 0.07);\n+    box-shadow: inset 5px 5px 7px -4px rgba(0, 0, 0, 0.07),\n+        inset -1px -1px 0.5px 0px rgba(0, 0, 0, 0.1);\n }\n \n :is(main, .polaroid .outer) .description {\n@@ -102,7 +106,6 @@ nav .polaroid .outer {\n     width: 15rem;\n     aspect-ratio: 3.5/4.2;\n     position: relative;\n-    transition: transform 0.5s;\n     pointer-events: auto;\n     transform-origin: bottom right;\n }"
+            },
+            {
+                "sha": "0cf2867373c66dcf9123c03bd2ff989be64244e9",
+                "filename": "backend/data/test.json",
+                "status": "added",
+                "additions": 1,
+                "deletions": 0,
+                "changes": 1,
+                "blob_url": "https://github.com/vanghoa/victoria-hertel-site/blob/296e4a8ec414591c5af97c740e5b3cdd92c0bfd4/backend%2Fdata%2Ftest.json",
+                "raw_url": "https://github.com/vanghoa/victoria-hertel-site/raw/296e4a8ec414591c5af97c740e5b3cdd92c0bfd4/backend%2Fdata%2Ftest.json",
+                "contents_url": "https://api.github.com/repos/vanghoa/victoria-hertel-site/contents/backend%2Fdata%2Ftest.json?ref=296e4a8ec414591c5af97c740e5b3cdd92c0bfd4",
+                "patch": "@@ -0,0 +1 @@\n+{ \"repository\": { \"issues\": { \"edges\": [] } } }"
+            },
+            {
+                "sha": "bfa25f8a62c135460f28f1ecd624538f3ee7617a",
+                "filename": "backend/graphql.mjs",
+                "status": "added",
+                "additions": 44,
+                "deletions": 0,
+                "changes": 44,
+                "blob_url": "https://github.com/vanghoa/victoria-hertel-site/blob/296e4a8ec414591c5af97c740e5b3cdd92c0bfd4/backend%2Fgraphql.mjs",
+                "raw_url": "https://github.com/vanghoa/victoria-hertel-site/raw/296e4a8ec414591c5af97c740e5b3cdd92c0bfd4/backend%2Fgraphql.mjs",
+                "contents_url": "https://api.github.com/repos/vanghoa/victoria-hertel-site/contents/backend%2Fgraphql.mjs?ref=296e4a8ec414591c5af97c740e5b3cdd92c0bfd4",
+                "patch": "@@ -0,0 +1,44 @@\n+// import + global config\n+import { graphql } from '@octokit/graphql';\n+import fs from 'fs';\n+//\n+import dotenv from 'dotenv';\n+dotenv.config();\n+//\n+import path from 'path';\n+import { fileURLToPath } from 'url';\n+const __filename = fileURLToPath(import.meta.url);\n+const __dirname = path.dirname(__filename);\n+\n+// graphql queries\n+const test = importGraphql('./graphql/test.graphql');\n+\n+// main func\n+main();\n+async function main() {\n+    await githubFile(test, 'test.json');\n+}\n+\n+//utilities\n+async function githubRequest(query) {\n+    const res = await graphql(query, {\n+        headers: {\n+            authorization: `token ${process.env.GITHUB_TOKEN}`,\n+        },\n+    });\n+    return res;\n+}\n+async function githubFile(\n+    query,\n+    filepath,\n+    beforewritefunc = () => {},\n+    dir_source = './backend/data/'\n+) {\n+    const res = await githubRequest(query, filepath);\n+    beforewritefunc(res);\n+    fs.writeFileSync(`${dir_source}${filepath}`, JSON.stringify(res));\n+    return res;\n+}\n+function importGraphql(filepath, dirname = __dirname) {\n+    return fs.readFileSync(path.resolve(dirname, filepath), 'utf8');\n+}"
+            },
+            {
+                "sha": "378d223101cd3e9cd6623a6ac7b7ee162212e4f6",
+                "filename": "backend/graphql/test.graphql",
+                "status": "added",
+                "additions": 11,
+                "deletions": 0,
+                "changes": 11,
+                "blob_url": "https://github.com/vanghoa/victoria-hertel-site/blob/296e4a8ec414591c5af97c740e5b3cdd92c0bfd4/backend%2Fgraphql%2Ftest.graphql",
+                "raw_url": "https://github.com/vanghoa/victoria-hertel-site/raw/296e4a8ec414591c5af97c740e5b3cdd92c0bfd4/backend%2Fgraphql%2Ftest.graphql",
+                "contents_url": "https://api.github.com/repos/vanghoa/victoria-hertel-site/contents/backend%2Fgraphql%2Ftest.graphql?ref=296e4a8ec414591c5af97c740e5b3cdd92c0bfd4",
+                "patch": "@@ -0,0 +1,11 @@\n+{\n+    repository(owner: \"vanghoa\", name: \"victoria-hertel-site\") {\n+        issues(last: 3) {\n+            edges {\n+                node {\n+                    title\n+                }\n+            }\n+        }\n+    }\n+}"
+            },
+            {
+                "sha": "9423c3b5ead85f4587b9af0a114fa25cc5673f88",
+                "filename": "package-lock.json",
+                "status": "modified",
+                "additions": 94,
+                "deletions": 0,
+                "changes": 94,
+                "blob_url": "https://github.com/vanghoa/victoria-hertel-site/blob/296e4a8ec414591c5af97c740e5b3cdd92c0bfd4/package-lock.json",
+                "raw_url": "https://github.com/vanghoa/victoria-hertel-site/raw/296e4a8ec414591c5af97c740e5b3cdd92c0bfd4/package-lock.json",
+                "contents_url": "https://api.github.com/repos/vanghoa/victoria-hertel-site/contents/package-lock.json?ref=296e4a8ec414591c5af97c740e5b3cdd92c0bfd4",
+                "patch": "@@ -8,6 +8,8 @@\n             \"name\": \"victoria-hertel-site\",\n             \"version\": \"0.1.0\",\n             \"dependencies\": {\n+                \"@octokit/graphql\": \"^8.1.0\",\n+                \"dotenv\": \"^16.4.5\",\n                 \"next\": \"14.1.0\",\n                 \"react\": \"^18\",\n                 \"react-dom\": \"^18\",\n@@ -361,6 +363,82 @@\n                 \"node\": \">= 8\"\n             }\n         },\n+        \"node_modules/@octokit/endpoint\": {\n+            \"version\": \"10.1.0\",\n+            \"resolved\": \"https://registry.npmjs.org/@octokit/endpoint/-/endpoint-10.1.0.tgz\",\n+            \"integrity\": \"sha512-ogZ5uLMeGBZUzS32fNt9j+dNw3kkEn5CSw4CVkN1EvCNdFYWrQ5diQR6Hh52VrPR0oayIoYTqQFL/l8RqkV0qw==\",\n+            \"dependencies\": {\n+                \"@octokit/types\": \"^13.0.0\",\n+                \"universal-user-agent\": \"^7.0.2\"\n+            },\n+            \"engines\": {\n+                \"node\": \">= 18\"\n+            }\n+        },\n+        \"node_modules/@octokit/graphql\": {\n+            \"version\": \"8.1.0\",\n+            \"resolved\": \"https://registry.npmjs.org/@octokit/graphql/-/graphql-8.1.0.tgz\",\n+            \"integrity\": \"sha512-XDvj6GcUnQYgbCLXElt3vZDzNIPGvGiwxQO2XzsvfVUjebGh0E5eCD/1My9zUGSNKaGVZitVuO8LMziGmoFryg==\",\n+            \"dependencies\": {\n+                \"@octokit/request\": \"^9.0.0\",\n+                \"@octokit/types\": \"^13.0.0\",\n+                \"universal-user-agent\": \"^7.0.0\"\n+            },\n+            \"engines\": {\n+                \"node\": \">= 18\"\n+            }\n+        },\n+        \"node_modules/@octokit/openapi-types\": {\n+            \"version\": \"21.2.0\",\n+            \"resolved\": \"https://registry.npmjs.org/@octokit/openapi-types/-/openapi-types-21.2.0.tgz\",\n+            \"integrity\": \"sha512-xx+Xd6I7rYvul/hgUDqv6TeGX0IOGnhSg9IOeYgd/uI7IAqUy6DE2B6Ipv2M4mWoxaMcWjIzgTIcv8pMO3F3vw==\"\n+        },\n+        \"node_modules/@octokit/request\": {\n+            \"version\": \"9.0.1\",\n+            \"resolved\": \"https://registry.npmjs.org/@octokit/request/-/request-9.0.1.tgz\",\n+            \"integrity\": \"sha512-kL+cAcbSl3dctYLuJmLfx6Iku2MXXy0jszhaEIjQNaCp4zjHXrhVAHeuaRdNvJjW9qjl3u1MJ72+OuBP0YW/pg==\",\n+            \"dependencies\": {\n+                \"@octokit/endpoint\": \"^10.0.0\",\n+                \"@octokit/request-error\": \"^6.0.1\",\n+                \"@octokit/types\": \"^12.0.0\",\n+                \"universal-user-agent\": \"^7.0.2\"\n+            },\n+            \"engines\": {\n+                \"node\": \">= 18\"\n+            }\n+        },\n+        \"node_modules/@octokit/request-error\": {\n+            \"version\": \"6.1.0\",\n+            \"resolved\": \"https://registry.npmjs.org/@octokit/request-error/-/request-error-6.1.0.tgz\",\n+            \"integrity\": \"sha512-xcLJv4IgfWIOEEVZwfhUN3yHNWJL0AMw1J1Ba8BofM9RdDTbapg6MO4zNxlPS4XXX9aAIsbDRa47K57EhgeVAw==\",\n+            \"dependencies\": {\n+                \"@octokit/types\": \"^13.0.0\"\n+            },\n+            \"engines\": {\n+                \"node\": \">= 18\"\n+            }\n+        },\n+        \"node_modules/@octokit/request/node_modules/@octokit/openapi-types\": {\n+            \"version\": \"20.0.0\",\n+            \"resolved\": \"https://registry.npmjs.org/@octokit/openapi-types/-/openapi-types-20.0.0.tgz\",\n+            \"integrity\": \"sha512-EtqRBEjp1dL/15V7WiX5LJMIxxkdiGJnabzYx5Apx4FkQIFgAfKumXeYAqqJCj1s+BMX4cPFIFC4OLCR6stlnA==\"\n+        },\n+        \"node_modules/@octokit/request/node_modules/@octokit/types\": {\n+            \"version\": \"12.6.0\",\n+            \"resolved\": \"https://registry.npmjs.org/@octokit/types/-/types-12.6.0.tgz\",\n+            \"integrity\": \"sha512-1rhSOfRa6H9w4YwK0yrf5faDaDTb+yLyBUKOCV4xtCDB5VmIPqd/v9yr9o6SAzOAlRxMiRiCic6JVM1/kunVkw==\",\n+            \"dependencies\": {\n+                \"@octokit/openapi-types\": \"^20.0.0\"\n+            }\n+        },\n+        \"node_modules/@octokit/types\": {\n+            \"version\": \"13.1.0\",\n+            \"resolved\": \"https://registry.npmjs.org/@octokit/types/-/types-13.1.0.tgz\",\n+            \"integrity\": \"sha512-nBwAFOYqVUUJ2AZFK4ZzESQptaAVqdTDKk8gE0Xr0o99WuPDSrhUC38x0F40xD9OUxXhOOuZKWNNVVLPSHQDvQ==\",\n+            \"dependencies\": {\n+                \"@octokit/openapi-types\": \"^21.0.0\"\n+            }\n+        },\n         \"node_modules/@pkgjs/parseargs\": {\n             \"version\": \"0.11.0\",\n             \"resolved\": \"https://registry.npmjs.org/@pkgjs/parseargs/-/parseargs-0.11.0.tgz\",\n@@ -1092,6 +1170,17 @@\n                 \"node\": \">=6.0.0\"\n             }\n         },\n+        \"node_modules/dotenv\": {\n+            \"version\": \"16.4.5\",\n+            \"resolved\": \"https://registry.npmjs.org/dotenv/-/dotenv-16.4.5.tgz\",\n+            \"integrity\": \"sha512-ZmdL2rui+eB2YwhsWzjInR8LldtZHGDoQ1ugH85ppHKwpUHL7j7rN0Ti9NCnGiQbhaZ11FpR+7ao1dNsmduNUg==\",\n+            \"engines\": {\n+                \"node\": \">=12\"\n+            },\n+            \"funding\": {\n+                \"url\": \"https://dotenvx.com\"\n+            }\n+        },\n         \"node_modules/eastasianwidth\": {\n             \"version\": \"0.2.0\",\n             \"resolved\": \"https://registry.npmjs.org/eastasianwidth/-/eastasianwidth-0.2.0.tgz\",\n@@ -3929,6 +4018,11 @@\n             \"integrity\": \"sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==\",\n             \"dev\": true\n         },\n+        \"node_modules/universal-user-agent\": {\n+            \"version\": \"7.0.2\",\n+            \"resolved\": \"https://registry.npmjs.org/universal-user-agent/-/universal-user-agent-7.0.2.tgz\",\n+            \"integrity\": \"sha512-0JCqzSKnStlRRQfCdowvqy3cy0Dvtlb8xecj/H8JFZuCze4rwjPZQOgvFvn0Ws/usCHQFGpyr+pB9adaGwXn4Q==\"\n+        },\n         \"node_modules/uri-js\": {\n             \"version\": \"4.4.1\",\n             \"resolved\": \"https://registry.npmjs.org/uri-js/-/uri-js-4.4.1.tgz\","
+            },
+            {
+                "sha": "07f53fdba78658b670490c0b4a29c3830b55aad9",
+                "filename": "package.json",
+                "status": "modified",
+                "additions": 4,
+                "deletions": 1,
+                "changes": 5,
+                "blob_url": "https://github.com/vanghoa/victoria-hertel-site/blob/296e4a8ec414591c5af97c740e5b3cdd92c0bfd4/package.json",
+                "raw_url": "https://github.com/vanghoa/victoria-hertel-site/raw/296e4a8ec414591c5af97c740e5b3cdd92c0bfd4/package.json",
+                "contents_url": "https://api.github.com/repos/vanghoa/victoria-hertel-site/contents/package.json?ref=296e4a8ec414591c5af97c740e5b3cdd92c0bfd4",
+                "patch": "@@ -7,9 +7,12 @@\n         \"build\": \"next build\",\n         \"start\": \"next start\",\n         \"lint\": \"next lint\",\n-        \"live\": \"npx serve@latest out\"\n+        \"live\": \"npx serve@latest out\",\n+        \"prebuild\": \"node backend/graphql.mjs\"\n     },\n     \"dependencies\": {\n+        \"@octokit/graphql\": \"^8.1.0\",\n+        \"dotenv\": \"^16.4.5\",\n         \"next\": \"14.1.0\",\n         \"react\": \"^18\",\n         \"react-dom\": \"^18\","
+            },
+            {
+                "sha": "548463a6b1881a346b019305cb82a4627be45d63",
+                "filename": "public/assets/pattern.png",
+                "status": "added",
+                "additions": 0,
+                "deletions": 0,
+                "changes": 0,
+                "blob_url": "https://github.com/vanghoa/victoria-hertel-site/blob/296e4a8ec414591c5af97c740e5b3cdd92c0bfd4/public%2Fassets%2Fpattern.png",
+                "raw_url": "https://github.com/vanghoa/victoria-hertel-site/raw/296e4a8ec414591c5af97c740e5b3cdd92c0bfd4/public%2Fassets%2Fpattern.png",
+                "contents_url": "https://api.github.com/repos/vanghoa/victoria-hertel-site/contents/public%2Fassets%2Fpattern.png?ref=296e4a8ec414591c5af97c740e5b3cdd92c0bfd4"
+            },
+            {
+                "sha": "d256e60f4e5bc75e11f33a8ea90eff97a62e6177",
+                "filename": "public/content/home.md",
+                "status": "removed",
+                "additions": 0,
+                "deletions": 19,
+                "changes": 19,
+                "blob_url": "https://github.com/vanghoa/victoria-hertel-site/blob/5a8fbce908918cf445e38bedba860b2948344a1c/public%2Fcontent%2Fhome.md",
+                "raw_url": "https://github.com/vanghoa/victoria-hertel-site/raw/5a8fbce908918cf445e38bedba860b2948344a1c/public%2Fcontent%2Fhome.md",
+                "contents_url": "https://api.github.com/repos/vanghoa/victoria-hertel-site/contents/public%2Fcontent%2Fhome.md?ref=5a8fbce908918cf445e38bedba860b2948344a1c",
+                "patch": "@@ -1,19 +0,0 @@\n-version 3\n-\n-# h1 Heading 8-)\n-\n-## h2 Heading\n-\n-### h3 Heading\n-\n-#### h4 Heading\n-\n-##### h5 Heading\n-\n-###### h6 Heading\n-\n-version 2\n-\n-# Alt-H1\n-\n-## Alt-H2"
+            },
+            {
+                "sha": "2bbc89444e052bfe8a54d3312c85157be9a9dfbe",
+                "filename": "public/content/portfolio/core, 2021.md",
+                "status": "modified",
+                "additions": 1,
+                "deletions": 1,
+                "changes": 2,
+                "blob_url": "https://github.com/vanghoa/victoria-hertel-site/blob/296e4a8ec414591c5af97c740e5b3cdd92c0bfd4/public%2Fcontent%2Fportfolio%2Fcore%2C%202021.md",
+                "raw_url": "https://github.com/vanghoa/victoria-hertel-site/raw/296e4a8ec414591c5af97c740e5b3cdd92c0bfd4/public%2Fcontent%2Fportfolio%2Fcore%2C%202021.md",
+                "contents_url": "https://api.github.com/repos/vanghoa/victoria-hertel-site/contents/public%2Fcontent%2Fportfolio%2Fcore%2C%202021.md?ref=296e4a8ec414591c5af97c740e5b3cdd92c0bfd4",
+                "patch": "@@ -12,7 +12,7 @@ version 3\n \n ###### h6 Heading\n \n-version 2\n+version 2 bip\n \n # Alt-H1\n "
+            }
+        ]
+    }
+]

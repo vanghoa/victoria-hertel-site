@@ -4,7 +4,12 @@
     --left_offset_polaroid: 2rem;
     --padding_polaroid: 1rem;
     --nav_gap: 4.8rem;
-    --nav_left_offset: 8rem;
+    --nav_gap_offset: 0rem;
+    --nav_left_offset: 1rem;
+    --nav_frame_width: 15rem;
+    --nav_timeline_gap: 10rem;
+    --nav_column_width: calc(var(--nav_frame_width) + var(--nav_timeline_gap));
+    --nav_current: 0;
 }
 
 * {
@@ -12,6 +17,10 @@
     padding: 0;
     margin: 0;
     position: relative;
+    text-decoration: none;
+    color: black;
+    list-style-type: none;
+    border: none;
 }
 
 html,
@@ -21,9 +30,6 @@ body {
 }
 
 :is(main, .polaroid .outer) {
-    background: url('/assets/pattern.png');
-    background-color: var(--white);
-    background-size: 5rem;
     width: 100vw;
     height: 100svh;
     padding: var(--padding_polaroid);
@@ -39,6 +45,7 @@ body {
     margin-top: 0.5rem;
     aspect-ratio: 1;
     flex-grow: 2;
+    width: 100%;
 }
 
 :is(main, .polaroid .outer) .image::after {
@@ -85,28 +92,74 @@ nav {
     top: 0;
     width: 100%;
     height: 100%;
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow: hidden;
     pointer-events: none;
+    background-color: transparent;
+    transition: background-color 1s;
 }
 
-nav > section {
-    left: var(--nav_left_offset);
-    top: -5rem;
+nav.open {
+    pointer-events: auto;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+nav .wrapper {
+    display: flex;
+    left: calc(
+        0px - var(--nav_column_width) * var(--nav_current) +
+            var(--nav_left_offset)
+    );
+    transition: left 0.3s;
+    height: 100%;
+    width: fit-content;
+}
+
+nav .column {
+    transition: opacity 1s;
+    opacity: 0;
+    pointer-events: none;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    width: var(--nav_column_width);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    scrollbar-color: rgba(255, 255, 255, 0.7) transparent;
+    left: -2rem;
+}
+
+nav .column > * {
+    top: calc(0px - var(--nav_gap) - var(--nav_gap_offset));
+}
+
+nav.open .column,
+nav .column.current {
+    opacity: 1;
+    pointer-events: auto;
 }
 
 nav .polaroid {
-    height: fit-content;
     position: relative;
-    height: var(--nav_gap);
+    height: calc(var(--nav_gap) - var(--nav_gap_offset));
+    transition: top 0.5s, height 0.5s;
 }
 
 nav .polaroid .outer {
     height: fit-content;
-    width: 15rem;
+    width: var(--nav_frame_width);
     aspect-ratio: 3.5/4.2;
     position: relative;
-    pointer-events: auto;
+    transform-origin: bottom right;
+}
+
+nav .polaroid .outer:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
     transform-origin: bottom right;
 }
 
@@ -114,8 +167,83 @@ nav .nested {
     position: relative;
 }
 
+nav .current .timestamp .description .left::before {
+    content: 'Currently at';
+}
+
+nav .extraspace .outer {
+    visibility: hidden;
+    height: calc(var(--nav_frame_width) * 2);
+}
+
 @media (hover: hover) and (pointer: fine) {
     nav .polaroid .outer:hover {
         transform: rotate(-20deg);
     }
+
+    nav .polaroid .outer:hover:before {
+        transform: rotate(20deg);
+    }
+}
+
+/* Timeline button */
+nav .timeline_nav {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    height: 25vh;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 3rem;
+    z-index: 10;
+    pointer-events: none;
+}
+
+nav .timeline_nav div {
+    display: flex;
+    gap: 1rem;
+}
+
+nav .timeline_nav div button {
+    width: 5rem;
+    height: 5rem;
+    background-color: var(--white);
+    border-radius: 0.3rem;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 1s;
+}
+
+/*  */
+nav.open .timeline_nav div button {
+    opacity: 1;
+    pointer-events: auto;
+    box-shadow: 0px -10px 15px -2px rgba(0, 0, 0, 0.2);
+}
+nav.open .removed .textured_bg {
+    background-color: rgb(255, 210, 214);
+}
+nav.open .added .textured_bg {
+    background-color: rgb(203, 255, 203);
+}
+nav.open .modified .textured_bg {
+    background-color: rgb(202, 224, 255);
+}
+
+nav .current .removed {
+    --nav_gap_offset: var(--nav_gap);
+}
+nav.open .removed {
+    --nav_gap_offset: 0rem;
+}
+
+/* utils */
+.textured_bg {
+    background: url('/assets/pattern.png');
+    background-color: var(--white);
+    background-blend-mode: multiply;
+    background-size: 5rem;
+    transition: background-color 0.5s;
 }

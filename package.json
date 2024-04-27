@@ -5,26 +5,31 @@
     "scripts": {
         "dev": "next dev",
         "build": "next build",
+        "prebuild": "node backend/graphql.mjs",
         "start": "next start",
         "lint": "next lint",
-        "live": "npx serve@latest out",
-        "prebuild": "node backend/graphql.mjs"
+        "live": "npx serve@latest out"
     },
     "dependencies": {
         "@octokit/graphql": "^8.1.0",
         "dotenv": "^16.4.5",
-        "next": "14.1.0",
-        "react": "^18",
-        "react-dom": "^18",
-        "seedrandom": "^3.0.5"
+        "graphql-raw-loader": "^0.1.0",
+        "graphql-tag": "^2.12.6",
+        "next": "^14.2.2",
+        "octokit": "^3.2.0",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "seedrandom": "^3.0.5",
+        "slug": "^9.0.0"
     },
     "devDependencies": {
         "@types/node": "^20",
         "@types/react": "^18",
         "@types/react-dom": "^18",
         "@types/seedrandom": "^3.0.8",
+        "@types/slug": "^5.0.8",
         "eslint": "^8",
-        "eslint-config-next": "14.1.0",
+        "eslint-config-next": "^14.2.2",
         "typescript": "^5"
     }
 }
