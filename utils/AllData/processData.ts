@@ -1,9 +1,5 @@
 import { fetchGithub } from '@/utils/AllData/githubClient';
-import { contentpatharr } from '../constants/paths';
-
-export const getCommitList = async () => {
-    return await fetchGithub('fetchNavData');
-};
+import { contentpath, contentpatharr, formatSlug } from '../constants/paths';
 
 export const formatNavData = (
     arr: any[],
@@ -19,24 +15,10 @@ export const formatNavData = (
         const item = arr[i];
         const name_split = item.path.split('/');
         let name = name_split[name_split.length - 1];
+        const isMD = name.endsWith('.md');
+        const isMDX = name.endsWith('.mdx');
 
-        if (name.endsWith('.md')) {
-            name = name.slice(0, -3);
-            //
-            obj[name] = {
-                type: 'page',
-                status: item.status || 'neutral',
-            };
-            added_counter += obj[name].status == 'added' ? 1 : 0;
-            modified_counter += obj[name].status != 'neutral' ? 1 : 0;
-            allfiles_counter++;
-            funcIfFile({
-                item,
-                name,
-                path: item.path,
-                obj: obj[name],
-            });
-        } else if (item.object?.entries) {
+        if (item.object?.entries) {
             const entries = {};
             const folder_status = formatNavData(
                 item.object.entries,
@@ -51,7 +33,10 @@ export const formatNavData = (
                 entries: entries,
                 status: item.status || folder_status,
             };
-            added_counter += obj[name].status == 'added' ? 1 : 0;
+            added_counter +=
+                obj[name].status == 'added' || obj[name].status == 'renamed'
+                    ? 1
+                    : 0;
             modified_counter += obj[name].status != 'neutral' ? 1 : 0;
             allfiles_counter++;
             funcIfFolder({
@@ -59,6 +44,29 @@ export const formatNavData = (
                 name,
                 path: item.path,
                 obj: obj[name],
+                status: obj[name].status,
+            });
+        } else if (isMD || isMDX) {
+            name = name.slice(0, isMD ? -3 : -4);
+            //
+            obj[name] = {
+                type: 'page',
+                status: item.status || 'neutral',
+                slug: formatSlug(item.path),
+            };
+            added_counter +=
+                obj[name].status == 'added' || obj[name].status == 'renamed'
+                    ? 1
+                    : 0;
+            modified_counter += obj[name].status != 'neutral' ? 1 : 0;
+            allfiles_counter++;
+            funcIfFile({
+                item,
+                name,
+                path: item.path,
+                slug: obj[name].slug,
+                obj: obj[name],
+                status: obj[name].status,
             });
         }
     }
@@ -95,7 +103,7 @@ export const formatPageCommitDetails_removed = (
     filename: string,
     entries: any[],
     level: number = 1,
-    index_removed: number
+    index_removed: { index: number; prevpath: string }
 ) => {
     for (let i = 0; i < entries.length; i++) {
         let item = entries[i];
@@ -120,7 +128,13 @@ export const formatPageCommitDetails_removed = (
             //
         }
     }
-    entries.splice(index_removed, 0, removedObjectGeneration(filename, level));
+    const foundIndex =
+        entries.findIndex(({ path }) => path == index_removed.prevpath) + 1;
+    entries.splice(
+        foundIndex == 0 ? index_removed.index : foundIndex,
+        0,
+        removedObjectGeneration(filename, level)
+    );
     //
 
     function removedObjectGeneration(filename: string, level: number): any {
@@ -131,7 +145,7 @@ export const formatPageCommitDetails_removed = (
                 .slice(0, contentpatharr.length + level)
                 .join('/'),
             object:
-                filename.split('/').length < contentpatharr.length + level
+                contentpatharr.length + level < filename.split('/').length
                     ? {
                           entries: [
                               removedObjectGeneration(filename, level + 1),
@@ -143,27 +157,34 @@ export const formatPageCommitDetails_removed = (
 };
 export function findIndexRemoved(
     filename: string,
+    entriespre: any[],
     entries: any[],
     level: number = 1
 ) {
+    const processed_filename = filename
+        .split('/')
+        .slice(0, contentpatharr.length + level)
+        .join('/');
     for (let i = 0; i < entries.length; i++) {
         let item = entries[i];
-        if (
-            item.path ==
-            filename
-                .split('/')
-                .slice(0, contentpatharr.length + level)
-                .join('/')
-        ) {
-            if (item.object?.entries) {
+        let itempre = entriespre[i];
+        if (item.path == processed_filename) {
+            if (
+                item.object?.entries &&
+                itempre?.path == processed_filename &&
+                itempre?.object?.entries
+            ) {
                 return findIndexRemoved(
                     filename,
+                    itempre.object.entries,
                     item.object.entries,
                     level + 1
                 );
             } else {
-                return i;
+                const prevpath: string = entries[i - 1]?.path || '';
+                return { index: i, prevpath };
             }
         }
     }
+    return { index: 0, prevpath: '' };
 }

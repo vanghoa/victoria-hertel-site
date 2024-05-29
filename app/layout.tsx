@@ -1,9 +1,20 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import './globals.css';
+import { DM_Mono } from 'next/font/google';
+import '../styles/globals.css';
+import '../styles/page.scss';
+import '../styles/responsive.css';
 import { NavServer } from '@/components/Nav/Server';
+import { ScrollbarSize } from '@/components/Layout/ScrollbarSize';
+import SVGFilter from '@/components/Layout/SVGFilter';
+import bg from '@/components/Layout/pattern.png';
+import { CSSProperties } from 'react';
 
-const inter = Inter({ subsets: ['latin'] });
+const font = DM_Mono({
+    weight: ['400', '500'],
+    style: ['normal', 'italic'],
+    subsets: ['latin'],
+    display: 'swap',
+});
 
 export const metadata: Metadata = {
     title: 'Create Next App',
@@ -16,8 +27,17 @@ export default async function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en">
-            <body className={inter.className}>
+        <html
+            lang="en"
+            style={
+                {
+                    '--background_url': `url(${bg.src})`,
+                } as CSSProperties
+            }
+        >
+            <body className={font.className}>
+                {/*<SVGFilter />*/}
+                <ScrollbarSize />
                 <NavServer />
                 {children}
             </body>

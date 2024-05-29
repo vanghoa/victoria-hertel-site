@@ -1,5 +1,5 @@
-import { PageFrame } from '@/components/PageFrame';
+import PageServer from '@/components/PageFrame/Server';
 
 export default function Home() {
-    return <PageFrame>n</PageFrame>;
+    return <PageServer>n</PageServer>;
 }

@@ -1,0 +1,72 @@
+#content {
+    padding-top: 4rem;
+
+    * {
+        font-size: 1rem;
+        line-height: 1.5em;
+    }
+
+    > * {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .grid {
+        display: flex;
+        gap: 2rem;
+        @media screen and (max-width: 500px) {
+            flex-direction: column;
+            gap: 0px;
+        }
+        .col {
+            flex: 1 1 0px;
+            min-width: 13rem;
+        }
+    }
+
+    ul {
+        padding-left: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    h2 {
+        font-size: 1.6rem;
+    }
+
+    h3 {
+        font-size: 1.4rem;
+    }
+
+    h4 {
+        font-size: 1.2rem;
+    }
+
+    h5 {
+    }
+
+    h6 {
+    }
+
+    br {
+        height: 2rem;
+        line-height: 2rem;
+        display: block;
+        content: ' ';
+    }
+
+    figure {
+        aspect-ratio: 2 / 1;
+        max-width: 800px;
+        max-height: calc(
+            100vh - var(--padding_polaroid) * 3 - var(--frame_description_h)
+        );
+        border: 2px solid var(--white);
+    }
+    img {
+        display: block;
+    }
+}

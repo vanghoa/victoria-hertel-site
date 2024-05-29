@@ -1,8 +1,16 @@
-import { PageFrame } from '@/components/PageFrame';
-import { fetchGithub } from '@/utils/AllData/githubClient';
-import { formatNavData, getCommitList } from '@/utils/AllData/processData';
-import slug from 'slug';
-import { unstable_cache } from 'next/cache';
+import PageServer, {
+    MDXContent,
+    PageError,
+} from '@/components/PageFrame/Server';
+import { MDXCustomComponents } from '@/mdx-components';
+import {
+    fetchGithub,
+    fetchNavData,
+    fetchPageContent,
+    fetchParamsPairObj,
+    fetchParamsPairObjType,
+} from '@/utils/AllData/githubClient';
+import { formatNavData } from '@/utils/AllData/processData';
 
 export const dynamicParams = false;
 
@@ -11,15 +19,50 @@ export default async function Page({
 }: {
     params: { oid: string; slug: string };
 }) {
-    const name = await paramsPairObj();
-    console.log(name[slug]);
-    const data = await fetchGithub('fetchPageContent', oid, `${name[slug]}`);
-    return <PageFrame>{JSON.stringify(data)}</PageFrame>;
+    const paramsPairObj: Awaited<ReturnType<typeof fetchParamsPairObj>> =
+        await fetchGithub('fetchParamsPairObj');
+    const gitdata = paramsPairObj?.[oid]?.[slug];
+    if (!gitdata) {
+        return <PageError />;
+    }
+    const {
+        path,
+        patch,
+        committedDate: { date, time },
+        name,
+    } = gitdata;
+    const pageContent: Awaited<ReturnType<typeof fetchPageContent>> =
+        await fetchGithub('fetchPageContent', oid, `${path}`);
+    if (!pageContent) {
+        return <PageError />;
+    }
+    /*
+    for (const chunk of patch) {
+        console.log(chunk);
+    }
+    console.log(matter.content);*/
+    return (
+        <PageServer
+            pgName={name}
+            date={
+                <>
+                    {date}
+                    <br></br> at {time}
+                </>
+            }
+        >
+            <MDXContent
+                source={pageContent.matter.content}
+                compileMDX={pageContent.compileMDX}
+            />
+        </PageServer>
+    );
 }
 
 export async function generateStaticParams() {
-    const commitList = await getCommitList();
-    const paramsArray: { oid: string; slug: string; path: string }[] = [];
+    const commitList: Awaited<ReturnType<typeof fetchNavData>> =
+        await fetchGithub('fetchNavData');
+    const paramsArray: { oid: string; slug: string }[] = [];
 
     for (const commit of commitList) {
         const {
@@ -28,33 +71,10 @@ export async function generateStaticParams() {
                 object: { entries },
             },
         } = commit;
-        formatNavData(
-            entries,
-            {},
-            ({
-                item,
-                name,
-                path,
-            }: {
-                item: any;
-                name: string;
-                path: string;
-            }) => {
-                paramsArray.push({ oid, slug: slug(name), path });
-            }
-        );
+        formatNavData(entries, {}, ({ slug }: { slug: string }) => {
+            paramsArray.push({ oid, slug });
+        });
     }
 
     return paramsArray;
 }
-
-export const paramsPairObj = async () => {
-    const paramsArray = await generateStaticParams();
-    const objectPair: {
-        [key: string]: string;
-    } = {};
-    paramsArray.map(({ slug, path }) => {
-        objectPair[slug] = path;
-    });
-    return objectPair;
-};

@@ -32,6 +32,20 @@
                                                                         ... on Tree {
                                                                             entries {
                                                                                 path
+                                                                                object {
+                                                                                    ... on Tree {
+                                                                                        entries {
+                                                                                            path
+                                                                                            object {
+                                                                                                ... on Tree {
+                                                                                                    entries {
+                                                                                                        path
+                                                                                                    }
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
                                                                             }
                                                                         }
                                                                     }

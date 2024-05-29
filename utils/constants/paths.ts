@@ -6,7 +6,18 @@ export const getAPIRoutePath = (slug: string) =>
 export const contentpath = 'public/content';
 export const contentpatharr = contentpath.split('/');
 
-export const getPagePath = (oid: string, pgName: string) =>
-    oid == 'latest'
-        ? `/latest/${slug(pgName)}`
-        : `/timeline/${oid}/${slug(pgName)}`;
+export const getPagePath = (oid: string, slug: string) =>
+    oid == 'latest' ? `/latest/${slug}` : `/timeline/${oid}/${slug}`;
+
+slug.charmap['/'] = '-';
+
+export const formatSlug = (path: string) => {
+    path = path.replace(contentpath, '');
+    ['.md', '.mdx'].some((str) => {
+        if (path.endsWith(str)) {
+            path = path.slice(0, -str.length);
+            return true;
+        }
+    });
+    return slug(path);
+};

@@ -1,0 +1,557 @@
+:root {
+    --white: #fffefc;
+    --offwhite: #efebd6;
+    --lightred: rgb(255, 210, 214);
+    --lightgreen: rgb(203, 255, 203);
+    --lightblue: rgb(202, 224, 255);
+    --left_offset_polaroid: 2rem;
+    --padding_polaroid: 1rem;
+    --nav_gap: 4.8rem;
+    --nav_gap_offset: 0rem;
+    --nav_gap_close_offset: 0.5rem;
+    --nav_top_offset_original: 10rem;
+    --nav_top_offset: var(--nav_gap);
+    --nav_left_offset: -2rem;
+    --nav_frame_width: 15rem;
+    --nav_timeline_gap: 10rem;
+    --nav_column_width: calc(var(--nav_frame_width) + var(--nav_timeline_gap));
+    --nav_current: 0;
+    --timeline_nav_p: 2rem;
+    --timeline_nav_h: 5rem;
+    --filter_nav_h: 2.5rem;
+    --scrollbar_width: 0px;
+    --background_url: url('/');
+    --frame_description_h: 2.5rem;
+}
+
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    position: relative;
+    text-decoration: none;
+    color: black;
+    list-style-type: none;
+    border: none;
+}
+
+button {
+    font-family: inherit;
+}
+
+html,
+body {
+    overflow: hidden;
+    font-size: 12px;
+}
+
+:is(main, .polaroid .outer) {
+    width: 100vw;
+    height: 100svh;
+    padding: var(--padding_polaroid);
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding_polaroid);
+    border-radius: 0.3rem;
+    box-shadow: 0px 10px 7px -4px rgba(0, 0, 0, 0.07);
+}
+
+:is(main, .polaroid .outer) .image {
+    background-color: var(--offwhite);
+    margin-top: 0.5rem;
+    flex-grow: 2;
+    width: 100%;
+}
+
+:is(main, .polaroid .outer) .image::after {
+    content: '';
+    position: absolute;
+    bottom: calc(0px - var(--padding_polaroid));
+    left: calc(0px - var(--padding_polaroid));
+    width: calc(100% + var(--padding_polaroid) * 2);
+    height: var(--padding_polaroid);
+    mix-blend-mode: darken;
+    background: linear-gradient(
+            90deg,
+            var(--white) 0%,
+            transparent 50%,
+            var(--white) 100%
+        ),
+        linear-gradient(0deg, rgba(0, 0, 0, 0.08) 0%, transparent 70%);
+}
+
+:is(main, .polaroid .outer) .image::before {
+    content: '';
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    box-shadow: inset 5px 5px 7px -4px rgba(0, 0, 0, 0.07),
+        inset -1px -1px 0.5px 0px rgba(0, 0, 0, 0.1);
+}
+
+:is(main, .polaroid .outer) .description {
+    height: var(--frame_description_h);
+    display: flex;
+}
+
+:is(main, .polaroid .outer) .description .left {
+    flex-grow: 1;
+}
+
+/* Nav */
+nav {
+    position: fixed;
+    z-index: 10;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+    background-color: transparent;
+    transition: background-color 1s;
+}
+
+nav .wrapper {
+    display: flex;
+    transform: translate3D(
+        calc(
+            0px - var(--nav_column_width) * var(--nav_current) +
+                var(--nav_left_offset)
+        ),
+        0,
+        0
+    );
+    will-change: transform;
+    transition: transform 0.5s;
+    height: 100%;
+    width: fit-content;
+}
+
+nav .column {
+    transition: opacity 1s;
+    opacity: 0;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    width: var(--nav_column_width);
+    scrollbar-color: rgba(255, 255, 255, 0.7) transparent;
+}
+
+nav .flexcolumn {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    transform: translate3D(0, var(--nav_top_offset), 0);
+    will-change: transform;
+}
+
+nav .flexcolumn > * {
+    top: calc(0px - var(--nav_gap));
+    /* top: calc(0px - var(--nav_gap) - var(--nav_gap_offset)); */
+}
+nav .flexcolumn > * .nested {
+    /* top: calc(0px - var(--nav_gap_offset)); */
+}
+
+nav .polaroid {
+    position: relative;
+    height: calc(var(--nav_gap) - var(--nav_gap_offset));
+    transition: top 0.5s, height 0.5s;
+}
+
+nav .polaroid .outer {
+    height: fit-content;
+    width: var(--nav_frame_width);
+    aspect-ratio: 3.5/4.2;
+    position: relative;
+    transform-origin: bottom right;
+}
+
+nav .polaroid .outer:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    transform-origin: bottom right;
+}
+
+nav .nested {
+    position: relative;
+    transition: top 0.5s, left 0.5s;
+}
+
+nav .nested > :first-child {
+    cursor: pointer;
+}
+
+nav .extraspace .outer {
+    visibility: hidden;
+    height: calc(var(--nav_frame_width) * 2);
+}
+
+nav .image {
+    aspect-ratio: 1/1;
+}
+
+/* info */
+nav .info {
+    width: var(--nav_frame_width);
+    margin: var(--timeline_nav_p) 0 2rem 0;
+    text-align: center;
+    overflow: visible;
+}
+
+nav .current .info {
+    max-height: var(--nav_top_offset_original);
+}
+
+nav.timeline .info {
+    max-height: unset;
+}
+
+nav .info .date {
+    font-size: 0.85rem;
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: auto;
+    text-align: left;
+    gap: 0.3rem;
+    padding: 0 var(--padding_polaroid);
+    margin-top: 2rem;
+}
+
+nav .info .details {
+    grid-column: 1/3;
+    display: flex;
+    justify-content: space-between;
+    font-weight: 900;
+}
+
+nav .info .details .changed {
+    color: var(--lightblue);
+}
+nav .info .details .additions {
+    color: var(--lightgreen);
+}
+nav .info .details .deletions {
+    color: var(--lightred);
+}
+
+nav .info .date > :nth-child(even) {
+    text-align: right;
+}
+
+nav .info .date > * {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+nav .info .message {
+    font-size: 1.5rem;
+    width: 100%;
+    cursor: pointer;
+    margin-top: 2rem;
+}
+
+nav .info .message.short {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+nav .info * {
+    color: var(--white);
+}
+
+nav .indicator {
+    opacity: 0;
+    width: var(--timeline_nav_h);
+    height: var(--timeline_nav_h);
+    border-radius: 0.3rem;
+    margin: 0 auto;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    nav .polaroid .outer:hover {
+        transform: rotate(-20deg);
+    }
+
+    nav .polaroid .outer:hover:before {
+        transform: rotate(20deg);
+    }
+}
+
+/* Timeline button */
+nav .timeline_nav,
+nav .filter_nav {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    z-index: 10;
+    pointer-events: none;
+    padding: var(--timeline_nav_p);
+    opacity: 0;
+    transition: opacity 0.5s;
+}
+
+nav .timeline_nav div {
+    display: flex;
+    gap: 1rem;
+}
+
+nav .timeline_nav div button {
+    width: var(--timeline_nav_h);
+    height: var(--timeline_nav_h);
+    background-color: var(--white);
+    border-radius: var(--timeline_nav_h);
+}
+
+/* filter nav */
+nav .filter_nav {
+    top: unset;
+    bottom: 0px;
+    min-height: 9rem;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+    gap: 1rem;
+    background: linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.7) 0%,
+        rgba(0, 0, 0, 0.5) 40%,
+        rgba(0, 0, 0, 0) 100%
+    );
+}
+
+nav .filter_nav button {
+    width: var(--filter_nav_h);
+    height: var(--filter_nav_h);
+    border-radius: 0.3rem;
+    position: static;
+}
+
+nav .filter_nav .instruction_hover {
+    position: absolute;
+    opacity: 0;
+    left: calc(var(--filter_nav_h) + var(--timeline_nav_p) + 1rem);
+    bottom: var(--timeline_nav_p);
+    height: fit-content;
+    pointer-events: none;
+    transition: opacity 0.5s;
+    font-size: 1rem;
+}
+
+nav .filter_nav .instruction_hover .outer {
+    width: calc(var(--nav_frame_width) * 80 / 100);
+}
+
+nav .filter_nav .instruction_hover .outer .description {
+    height: fit-content;
+}
+
+nav .filter_nav button:hover .instruction_hover {
+    opacity: 1;
+}
+
+nav .filter_nav button .question_mark {
+    font-weight: bold;
+    font-size: 2rem;
+}
+
+nav .filter_nav button .question_mark span {
+    mix-blend-mode: overlay;
+}
+
+nav .filter_nav button .question_mark::before {
+    content: '?';
+    position: absolute;
+    mix-blend-mode: soft-light;
+    opacity: 0.5;
+}
+
+/* .timeline / .current state */
+nav.timeline {
+    background-color: rgba(0, 0, 0, 0.75);
+    --nav_left_offset: calc(
+        50vw - var(--nav_frame_width) / 2 - var(--nav_timeline_gap) +
+            var(--scrollbar_width)
+    );
+}
+/*
+nav.timeline :is(.timeline_nav, .filter_nav) button {
+    box-shadow: 0px -10px 15px -2px rgba(0, 0, 0, 0.1);
+}
+*/
+nav.timeline .removed > .textured_bg,
+nav .filter_nav .red,
+nav .filter_nav .red .textured_bg {
+    background-color: var(--lightred);
+}
+nav.timeline :is(.added, .renamed) > .textured_bg,
+nav .filter_nav .green,
+nav .filter_nav .green .textured_bg {
+    background-color: var(--lightgreen);
+}
+nav.timeline .modified > .textured_bg,
+nav .filter_nav .blue,
+nav .filter_nav .blue .textured_bg {
+    background-color: var(--lightblue);
+}
+.polaroid.current_pg .outer {
+    transform: rotate(-5deg) translateX(-1rem);
+}
+
+nav:not(.timeline) .current .removed {
+    --nav_gap_offset: var(--nav_gap);
+    margin-bottom: 0px;
+}
+nav:not(.timeline) .current .nested.removed,
+nav:not(.timeline) .current .nested.removed > * > .textured_bg {
+    left: 0px !important;
+}
+/* complex shit */
+nav:not(.timeline) .current .flexcolumn > :is(.nested, .polaroid).removed {
+    top: calc(0px - var(--nav_gap) - var(--nav_gap_offset));
+}
+nav:not(.timeline) .current .nested :is(.nested, .polaroid).removed {
+    top: calc(0px - var(--nav_gap));
+}
+nav:not(.timeline) .current .nested.removed :is(.nested, .polaroid).removed {
+    top: 0px;
+}
+nav:not(.timeline) .current .flexcolumn > :is(.nested, .polaroid).removed,
+nav:not(.timeline) .current .nested :is(.nested, .polaroid).removed {
+    opacity: 0;
+    transition: left 0.5s, top 0.5s, opacity 0.5s 0.5s;
+}
+nav:not(.timeline) .current .nested.removed :is(.nested, .polaroid).removed {
+    opacity: 1;
+    transition: left 0.5s, top 0.5s, opacity 0.5s;
+}
+/* */
+nav .column:not(.current) .timestamp {
+    --nav_gap_offset: var(--nav_gap);
+    opacity: 0;
+}
+
+nav:not(.timeline) .column.current {
+    --nav_top_offset: calc(
+        0px - var(--nav_top_offset_original) - var(--timeline_nav_h) -
+            var(--timeline_nav_p) * 2
+    );
+}
+
+nav .column.current,
+nav.timeline .column,
+nav .column.current .polaroid,
+nav.timeline,
+nav.timeline :is(.timeline_nav, .filter_nav) {
+    opacity: 1;
+}
+
+nav.timeline .column,
+nav .column.current .polaroid,
+nav.timeline,
+nav.timeline :is(.timeline_nav, .filter_nav) button {
+    pointer-events: auto;
+}
+
+nav .current .indicator {
+    opacity: 1;
+}
+
+/* close folder */
+
+nav .nested.close {
+    --left_offset_polaroid: 0.5rem;
+    margin-bottom: calc(var(--nav_gap) - var(--nav_gap_close_offset));
+}
+
+nav .nested.close .nested.close {
+    margin-bottom: 0px;
+}
+
+nav .nested.close > * {
+    --nav_gap_offset: calc(var(--nav_gap) - var(--nav_gap_close_offset));
+}
+
+nav .nested.close .nested {
+    top: 0px;
+}
+
+/* utils */
+.textured_bg {
+    background: var(--background_url);
+    background-color: var(--white);
+    background-blend-mode: multiply;
+    background-size: 5rem;
+    transition: background-color 0.5s;
+}
+
+/* svg */
+svg {
+    height: 0;
+    position: fixed;
+    z-index: -10;
+}
+
+/* curtains */
+#page_section {
+    height: 1px;
+}
+#page_section.init {
+    background-color: var(--white);
+}
+#page_frame {
+    position: absolute;
+    right: 0;
+    width: calc(
+        100% - var(--nav_column_width) - var(--nav_left_offset) +
+            var(--padding_polaroid)
+    );
+    padding: var(--padding_polaroid);
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    pointer-events: none;
+}
+#canvas {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 1;
+    pointer-events: none;
+}
+#canvas canvas {
+    position: fixed;
+}
+#content {
+    width: 100%;
+    visibility: hidden;
+}
+/*
+.text-plane {
+    margin: -1em;
+    padding: 1em;
+}
+*/
+.hide_canvas #canvas {
+    visibility: hidden;
+}
+.hide_canvas #content {
+    visibility: visible;
+}
+.hide_canvas #page_frame {
+    pointer-events: auto;
+}

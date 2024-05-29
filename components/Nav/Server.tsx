@@ -1,32 +1,45 @@
-import { getCommitList } from '@/utils/AllData/processData';
 import { NavClient } from './Client';
-import { contentpath } from '@/utils/constants/paths';
+import { contentpath, formatSlug } from '@/utils/constants/paths';
 import fs from 'fs';
-import { fetchGithub } from '@/utils/AllData/githubClient';
+import {
+    fetchGithub,
+    fetchPageCommitDetails,
+} from '@/utils/AllData/githubClient';
+import { localDate } from '@/utils/smallUtils';
+import { cache } from 'react';
 
-export const walkDirectory = (path: string = contentpath, obj: any = {}) => {
-    let dir = fs.readdirSync(path);
-    for (let i = 0; i < dir.length; i++) {
-        let name = dir[i];
-        let target = path + '/' + name;
-        let stats = fs.statSync(target);
-        if (stats.isFile() && name.endsWith('.md')) {
-            name = name.slice(0, -3);
-            obj[name] = {
-                type: 'page',
-                status: 'latest',
-            };
-        } else if (stats.isDirectory()) {
-            obj[name] = {
-                type: 'folder',
-                status: 'latest',
-                entries: {},
-            };
-            walkDirectory(target, obj[name].entries);
+export const walkDirectory = cache(
+    (path: string = contentpath, obj: any = {}) => {
+        // need cache
+        // console.log('refetch walkdirectory');
+        let dir = fs.readdirSync(path);
+        for (let i = 0; i < dir.length; i++) {
+            let name = dir[i];
+            let target = path + '/' + name;
+            let stats = fs.statSync(target);
+            const isMD = name.endsWith('.md');
+            const isMDX = name.endsWith('.mdx');
+
+            if (stats.isFile() && (isMD || isMDX)) {
+                name = name.slice(0, isMD ? -3 : -4);
+                obj[name] = {
+                    type: 'page',
+                    status: 'latest',
+                    slug: formatSlug(target),
+                    path: target,
+                };
+            } else if (stats.isDirectory()) {
+                obj[name] = {
+                    type: 'folder',
+                    status: 'latest',
+                    entries: {},
+                };
+                walkDirectory(target, obj[name].entries);
+            }
         }
+        return obj;
     }
-    return obj;
-};
+);
 
 /* sample object structure 
 {
@@ -45,11 +58,13 @@ export const walkDirectory = (path: string = contentpath, obj: any = {}) => {
 
 export const NavServer = async () => {
     console.log('server rendered');
-    const commitList: any[] = await fetchGithub('fetchPageCommitDetails');
+    const commitList: Awaited<ReturnType<typeof fetchPageCommitDetails>> =
+        await fetchGithub('fetchPageCommitDetails');
     commitList.unshift({
-        committedDate: new Date().toISOString(),
+        committedDate: localDate(),
         oid: 'latest',
         tree: walkDirectory(),
+        message: 'this is the latest site! this is the latest site!',
     });
     const oidOrder = commitList.reduce(
         (acc, cur, index) => ((acc[cur.oid] = index), acc),

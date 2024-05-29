@@ -1,0 +1,95 @@
+.mobile {
+    display: none;
+}
+
+@media only screen and (max-width: 800px) {
+    :root {
+        --nav_left_offset: -5rem;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    body {
+        font-size: 10px;
+    }
+    :root {
+        --timeline_nav_p: 1rem;
+        --nav_left_offset: calc(
+            50vw - var(--nav_frame_width) / 2 - var(--nav_timeline_gap)
+        );
+        --nav_timeline_gap: 9rem;
+    }
+    .mobile {
+        display: block;
+    }
+
+    nav .current {
+        --nav_top_offset_original: 24rem;
+        --nav_gap: 0px;
+        --left_offset_polaroid: 0rem;
+    }
+
+    nav:is(.open, .timeline) .current {
+        --nav_frame_width: unset;
+        --nav_gap: unset;
+        --left_offset_polaroid: unset;
+        --nav_top_offset_original: unset;
+    }
+
+    nav:is(.open, .timeline) .mobile {
+        display: none;
+    }
+
+    #page_frame {
+        width: 100%;
+    }
+
+    #content {
+        padding-top: 6rem;
+    }
+
+    nav.open {
+        pointer-events: auto;
+        background-color: rgba(0, 0, 0, 0.7);
+        --nav_left_offset: calc(
+            50vw - var(--nav_frame_width) / 2 - var(--nav_timeline_gap) +
+                var(--scrollbar_width)
+        );
+    }
+
+    nav.open .column:not(.current) {
+        pointer-events: none;
+    }
+
+    nav:not(.open, .timeline) .polaroid:not(.mobile, .current_pg) .outer {
+        box-shadow: none;
+    }
+
+    nav .timeline_nav div button {
+        transition: opacity 0.5s;
+    }
+
+    nav .flexcolumn {
+        transition: transform 0.5s;
+    }
+
+    /* close */
+    nav:not(.open, .timeline) .current .nested {
+        margin-bottom: 0px !important;
+    }
+    nav:not(.open, .timeline) .nested.close > * {
+        --nav_gap_offset: 0px;
+    }
+}
+
+@media only screen and (max-width: 400px) {
+    :root {
+        --nav_timeline_gap: 6rem;
+    }
+    nav .timeline_nav div:first-child {
+        flex-direction: column;
+    }
+    nav .timeline_nav div {
+        flex-direction: column-reverse;
+    }
+}
