@@ -6,6 +6,56 @@
                 "history": {
                     "nodes": [
                         {
+                            "changedFilesIfAvailable": 70,
+                            "additions": 9357,
+                            "deletions": 951,
+                            "message": "various update - core, 2021 & drop, 2022",
+                            "committedDate": "2024-05-29T09:13:03Z",
+                            "oid": "ff91752a7d21158cea7fea33f54268d586ce2cb0",
+                            "committer": { "name": "Bao Anh Bui" },
+                            "file": {
+                                "object": {
+                                    "entries": [
+                                        {
+                                            "path": "public/content/about.mdx",
+                                            "object": {}
+                                        },
+                                        {
+                                            "path": "public/content/contact.mdx",
+                                            "object": {}
+                                        },
+                                        {
+                                            "path": "public/content/portfolio",
+                                            "object": {
+                                                "entries": [
+                                                    {
+                                                        "path": "public/content/portfolio/core, 2021.mdx",
+                                                        "object": {}
+                                                    },
+                                                    {
+                                                        "path": "public/content/portfolio/drop, 2022.mdx",
+                                                        "object": {}
+                                                    },
+                                                    {
+                                                        "path": "public/content/portfolio/scent, 2022.mdx",
+                                                        "object": {}
+                                                    },
+                                                    {
+                                                        "path": "public/content/portfolio/steps, 2022.mdx",
+                                                        "object": {}
+                                                    },
+                                                    {
+                                                        "path": "public/content/portfolio/times, 2023.mdx",
+                                                        "object": {}
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
                             "changedFilesIfAvailable": 6,
                             "additions": 0,
                             "deletions": 1,

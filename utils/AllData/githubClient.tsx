@@ -137,9 +137,7 @@ export const fetchPageCommitDetails = cache(async () => {
                     } else {
                         formatPageCommitDetails(filename, status, entries);
                     }
-                }
-
-                if (file.previous_filename?.startsWith(contentpath)) {
+                } else if (file.previous_filename?.startsWith(contentpath)) {
                     formatPageCommitDetails_removed(
                         file.previous_filename,
                         entries,

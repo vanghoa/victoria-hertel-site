@@ -49,6 +49,9 @@ export const formatNavData = (
         } else if (isMD || isMDX) {
             name = name.slice(0, isMD ? -3 : -4);
             //
+            if (item.status == 'removed' && name in obj) {
+                continue;
+            }
             obj[name] = {
                 type: 'page',
                 status: item.status || 'neutral',
