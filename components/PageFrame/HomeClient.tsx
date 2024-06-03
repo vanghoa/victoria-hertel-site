@@ -225,6 +225,8 @@ export const HomePageClient = ({
                 <div ref={canvasRef} id="canvas"></div>
                 <div ref={contentRef} id="content">
                     {slideshow.map((slide, i) => {
+                        const width = slide.size.width || 0;
+                        const height = slide.size.height || 0;
                         return (
                             <div
                                 key={i}
@@ -234,7 +236,12 @@ export const HomePageClient = ({
                             >
                                 <div
                                     style={{
-                                        aspectRatio: `${slide.size.width} / ${slide.size.height}`,
+                                        aspectRatio: ` ${width} / ${height}`,
+                                        ...{
+                                            [width > height
+                                                ? 'maxHeight'
+                                                : 'maxWidth']: 'unset',
+                                        },
                                     }}
                                 >
                                     <Image
