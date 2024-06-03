@@ -28,7 +28,7 @@ export const rehypeImageSize = (options) => {
                 node.properties.width = imageSize.width;
                 node.properties.height = imageSize.height;
             } catch (error) {
-                console.error(error);
+                console.log(error);
             }
         });
         // This matches all MDX' <Image /> components.

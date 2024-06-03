@@ -22,7 +22,7 @@ export const rehypeSlideShow = (options) => {
                             size: imageSize,
                         });
                     } catch (error) {
-                        console.error(error);
+                        console.log(error);
                     }
                     return result;
                 }, []);

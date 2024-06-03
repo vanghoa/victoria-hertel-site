@@ -84,7 +84,7 @@ export const MDXCustomComponents: MDXComponents = {
         if (!width || !height) {
             return (
                 <figure>
-                    <img src={src} alt={alt || `an image at ${src}`}></img>
+                    <img src={src} alt={`an image at ${src}`}></img>
                 </figure>
             );
         }
