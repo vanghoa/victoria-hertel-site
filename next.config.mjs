@@ -2,12 +2,13 @@ import createMDX from '@next/mdx';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    async rewrites() {
-        console.log('rewrites called');
+    async redirects() {
+        console.log('redirects called');
         return [
             {
                 source: '/',
                 destination: '/latest/home',
+                permanent: true,
             },
         ];
     },
