@@ -1,9 +1,11 @@
 import getImageSize from 'image-size';
 import { visit } from 'unist-util-visit';
+import path from 'path';
 
 export const rehypeSlideShow = (options) => {
     return (tree) => {
-        const slug = `${options?.root ?? ''}/public/assets`;
+        const slug = path.resolve('./public', 'assets');
+        // `${options?.root ?? ''}/public/assets`;
         visit(
             tree,
             { type: 'mdxJsxFlowElement', name: 'SlideShow' },

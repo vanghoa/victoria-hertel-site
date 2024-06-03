@@ -6,6 +6,7 @@
  */
 import getImageSize from 'image-size';
 import { visit } from 'unist-util-visit';
+import path from 'path';
 
 /**
  * Analyze local MDX images and add `width` and `height` attributes to the
@@ -15,8 +16,8 @@ import { visit } from 'unist-util-visit';
  */
 export const rehypeImageSize = (options) => {
     return (tree) => {
-        const slug = `${options?.root ?? ''}/public/assets`;
-        // This matches all images that use the markdown standard format ![label](path).
+        const slug = path.resolve('./public', 'assets');
+        // `${options?.root ?? ''}/public/assets`;
         visit(tree, { type: 'element', tagName: 'img' }, (node) => {
             if (node.properties.width || node.properties.height) {
                 return;

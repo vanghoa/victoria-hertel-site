@@ -14,7 +14,7 @@ const nextConfig = {
     },
     experimental: {
         outputFileTracingIncludes: {
-            '/assets': ['./public/**/*'],
+            '/public': ['./public/**/*'],
         },
     },
     reactStrictMode: false,
