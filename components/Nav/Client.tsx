@@ -1,5 +1,6 @@
 'use client';
 
+import { Suspense } from 'react';
 import { getPagePath } from '@/utils/constants/paths';
 import Link from 'next/link';
 import {
@@ -467,18 +468,20 @@ export const NavClient = ({
     const slug = params.slug || '';
     const pathname = usePathname();
     return (
-        <NavTimeline
-            commitList={commitList}
-            oidOrder={oidOrder}
-            pathname={pathname}
-            oid={oid}
-        >
-            <NavTimelineContent
+        <Suspense>
+            <NavTimeline
                 commitList={commitList}
+                oidOrder={oidOrder}
                 pathname={pathname}
                 oid={oid}
-                slug={slug}
-            />
-        </NavTimeline>
+            >
+                <NavTimelineContent
+                    commitList={commitList}
+                    pathname={pathname}
+                    oid={oid}
+                    slug={slug}
+                />
+            </NavTimeline>
+        </Suspense>
     );
 };

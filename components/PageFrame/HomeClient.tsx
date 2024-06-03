@@ -124,7 +124,7 @@ export const HomePageClient = ({
         if (!mediaEl) {
             return;
         }
-        let timeout = null;
+        let timeout: NodeJS.Timeout | null = null;
         if (firstUpdate.current) {
             firstUpdate.current = false;
             timeout = setTimeout(setUpCurtain, 1500);
