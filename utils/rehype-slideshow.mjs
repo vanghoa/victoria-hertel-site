@@ -15,6 +15,7 @@ export const rehypeSlideShow = (options) => {
                 );
                 const slideshow = srcArr.reduce((result, src) => {
                     try {
+                        console.log(`path bip: ${slug}${src}`);
                         const imageSize = getImageSize(`${slug}${src}`);
                         result.push({
                             src,

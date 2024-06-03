@@ -23,6 +23,7 @@ export const rehypeImageSize = (options) => {
             }
             const imagePath = `${slug}${node.properties.src}`;
             try {
+                console.log(`path bip: ${imagePath}`);
                 const imageSize = getImageSize(imagePath);
                 node.properties.width = imageSize.width;
                 node.properties.height = imageSize.height;
