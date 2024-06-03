@@ -18,7 +18,6 @@ import {
     formatPageCommitDetails_removed,
 } from './processData';
 import { localDate } from '../smallUtils';
-// @ts-ignore
 import { generateStaticParams as generateStaticParamsTimeline } from '@/app/timeline/[oid]/[slug]/page';
 import matter from 'gray-matter';
 import parseGitDiff, { AnyChunk, GitDiff } from 'parse-git-diff';
