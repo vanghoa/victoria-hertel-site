@@ -182,7 +182,6 @@ export default function PageClient({ children }: { children: ReactNode }) {
                               return;
                           }
                           for (let i = 0; i < mediaEls.length; i++) {
-                              console.log('media');
                               const plane = new Plane(curtains, mediaEls[i], {
                                   vertexShader: vs,
                                   fragmentShader: fs,
@@ -193,7 +192,6 @@ export default function PageClient({ children }: { children: ReactNode }) {
                               });
                           }
                           for (let i = 0; i < textEls.length; i++) {
-                              console.log('text');
                               const plane = new Plane(curtains, textEls[i], {
                                   vertexShader: vs,
                                   fragmentShader: fs,

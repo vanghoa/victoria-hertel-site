@@ -4,7 +4,7 @@
             name
             target {
                 ... on Commit {
-                    history(first: 3, path: "public/content/") {
+                    history(first: 10, path: "public/content/") {
                         nodes {
                             changedFilesIfAvailable
                             additions
