@@ -1,12 +1,14 @@
 import { fetchGithub } from '@/utils/AllData/githubClient';
 import { contentpath, contentpatharr, formatSlug } from '../constants/paths';
+import { PageMeta } from '@/components/Nav/Server';
 
 export const formatNavData = (
     arr: any[],
     obj: any = {},
     funcIfFile: any = () => {},
     funcIfFolder: any = () => {},
-    isFirst: boolean = true
+    isFirst: boolean = true,
+    pagemeta: PageMeta = {}
 ) => {
     let added_counter = 0;
     let modified_counter = 0;
@@ -25,13 +27,15 @@ export const formatNavData = (
                 entries,
                 funcIfFile,
                 funcIfFolder,
-                false
+                false,
+                pagemeta[name]?.entries || {}
             );
             //
             obj[name] = {
                 type: 'folder',
                 entries: entries,
                 status: item.status || folder_status,
+                order: pagemeta[name]?.order || 0,
             };
             added_counter +=
                 obj[name].status == 'added' || obj[name].status == 'renamed'
@@ -56,6 +60,7 @@ export const formatNavData = (
                 type: 'page',
                 status: item.status || 'neutral',
                 slug: formatSlug(item.path),
+                order: pagemeta[name]?.order || 0,
             };
             added_counter +=
                 obj[name].status == 'added' || obj[name].status == 'renamed'
@@ -79,6 +84,9 @@ export const formatNavData = (
     } else if (modified_counter > 0) {
         status = 'modified';
     }
+    obj.__treekeys = Object.keys(obj).sort(
+        (a, b) => obj[a].order - obj[b].order
+    );
     return isFirst ? obj : status;
 };
 

@@ -8,7 +8,7 @@ import {
 import { localDate } from '@/utils/smallUtils';
 import meta from '@/public/content/meta.json';
 
-type PageMeta = {
+export type PageMeta = {
     [key: string]: {
         order: number;
         entries?: PageMeta;

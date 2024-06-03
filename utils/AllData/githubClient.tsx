@@ -36,46 +36,83 @@ export const fetchNavData = cache(async () => {
     const data: any = await graphql(navQuery, headers);
     const nodes: any[] =
         data?.repository?.defaultBranchRef?.target?.history?.nodes || [];
-    nodes.map((item, index) => {
-        const entries = item.file.object.entries;
-        item.committedDate = localDate(item.committedDate);
-        item.tree = formatNavData(entries);
-    });
+    await Promise.all(
+        nodes.map(async (item, index) => {
+            const entries: [] | null | undefined = item?.file?.object?.entries;
+            /*
+            const pagemeta =
+                entries && (await fetchPageMeta(entries, item.oid));*/
+            item.committedDate = localDate(item.committedDate);
+            item.tree =
+                entries &&
+                formatNavData(
+                    entries,
+                    {},
+                    () => {},
+                    () => {},
+                    true,
+                    {}
+                );
+        })
+    );
     return nodes;
 });
 
-export const fetchPageContent = cache(async (oid?: string, path?: string) => {
-    console.log(`refetch PageContent ${oid} / ${path}:`);
-    const data: any = await graphql(
-        `
-            query ($oid: String!, $expression: String!) {
-                repository(owner: "vanghoa", name: "victoria-hertel-site") {
-                    content: object(expression: $expression) {
-                        ... on Blob {
-                            text
+const fetchPageMeta = async (entries: [], oid: string) => {
+    const metacontent =
+        entries.some(
+            (el: { path: string }) => el.path == `${contentpath}/meta.json`
+        ) &&
+        (await fetchGithub(
+            'fetchPageContent',
+            oid,
+            `${contentpath}/meta.json`,
+            true
+        ));
+    const pagemeta =
+        metacontent &&
+        metacontent !== '' &&
+        JSON.parse(metacontent)?.['page meta'];
+    return pagemeta;
+};
+
+export const fetchPageContent = cache(
+    async (oid?: string, path?: string, contentOnly: boolean = false) => {
+        console.log(`refetch PageContent ${oid} / ${path}:`);
+        const data: any = await graphql(
+            `
+                query ($oid: String!, $expression: String!) {
+                    repository(owner: "vanghoa", name: "victoria-hertel-site") {
+                        content: object(expression: $expression) {
+                            ... on Blob {
+                                text
+                            }
                         }
-                    }
-                    date: object(expression: $oid) {
-                        ... on Commit {
-                            committedDate
+                        date: object(expression: $oid) {
+                            ... on Commit {
+                                committedDate
+                            }
                         }
                     }
                 }
+            `,
+            {
+                oid,
+                expression: `${oid}:${path}`,
+                ...headers,
             }
-        `,
-        {
-            oid,
-            expression: `${oid}:${path}`,
-            ...headers,
+        );
+        const fileContent = data?.repository?.content?.text || '';
+        if (contentOnly) {
+            return fileContent;
         }
-    );
-    const fileContent = data?.repository?.content?.text || '';
-    const fileMatter = matter(fileContent);
-    return {
-        matter: fileMatter,
-        compileMDX: String(await CompileMDXFunc(fileMatter.content)),
-    };
-});
+        const fileMatter = matter(fileContent);
+        return {
+            matter: fileMatter,
+            compileMDX: String(await CompileMDXFunc(fileMatter.content)),
+        };
+    }
+);
 
 export const fetchOctokitPaginate = cache(
     async (route?: string, params?: string) => {
@@ -144,10 +181,23 @@ export const fetchPageCommitDetails = cache(async () => {
             }
         }
     }
-    commitList.map((item) => {
-        const entries = item.file.object.entries;
-        item.tree = formatNavData(entries);
-    });
+    await Promise.all(
+        commitList.map(async (item) => {
+            const entries = item.file.object.entries;
+            const pagemeta =
+                entries && (await fetchPageMeta(entries, item.oid));
+            item.tree =
+                entries &&
+                formatNavData(
+                    entries,
+                    {},
+                    () => {},
+                    () => {},
+                    true,
+                    pagemeta || {}
+                );
+        })
+    );
 
     return commitList;
 });
@@ -227,46 +277,55 @@ export const cacheFunction = {
 
 export type cacheType = keyof typeof cacheFunction;
 
-export const fetchGithub = cache(async (type: cacheType, ...rest: string[]) => {
-    try {
-        let tags: string[] = [type];
-        switch (type) {
-            case 'fetchNavData':
-                break;
-            case 'fetchPageCommitDetails':
-                break;
-            case 'fetchParamsPairObj':
-                break;
-            case 'fetchPageContent':
-                tags.push(`fetchPageContent${rest.toString()}`, rest[0]);
-                break;
-            case 'fetchOctokitPaginate':
-                tags.push(`fetchOctokitPaginate${rest.toString()}`, rest[0]);
-                break;
-            default:
-                console.log(
-                    `co loi o fetchGithub: wrong type request: ${type}`
-                );
-                return null;
+export const fetchGithub = cache(
+    async (type: cacheType, ...rest: (boolean | string)[]) => {
+        try {
+            let tags: string[] = [type];
+            switch (type) {
+                case 'fetchNavData':
+                    break;
+                case 'fetchPageCommitDetails':
+                    break;
+                case 'fetchParamsPairObj':
+                    break;
+                case 'fetchPageContent':
+                    tags.push(
+                        `fetchPageContent${rest.toString()}`,
+                        `${rest[0]}`
+                    );
+                    break;
+                case 'fetchOctokitPaginate':
+                    tags.push(
+                        `fetchOctokitPaginate${rest.toString()}`,
+                        `${rest[0]}`
+                    );
+                    break;
+                default:
+                    console.log(
+                        `co loi o fetchGithub: wrong type request: ${type}`
+                    );
+                    return null;
+            }
+            const res = await (
+                await fetch(
+                    `${getAPIRoutePath(
+                        'githubFetch'
+                    )}?type=${type}&args=${JSON.stringify(rest)}`,
+                    {
+                        cache: 'force-cache',
+                        next: { tags },
+                    }
+                )
+            ).json();
+            res.succeed &&
+                console.log(`fetchGithub from api: ${type} / ${rest}`);
+            return res.message;
+        } catch (e) {
+            console.log(`co loi o fetchGithub: ${e}`);
+            return null;
         }
-        const res = await (
-            await fetch(
-                `${getAPIRoutePath(
-                    'githubFetch'
-                )}?type=${type}&args=${JSON.stringify(rest)}`,
-                {
-                    cache: 'force-cache',
-                    next: { tags },
-                }
-            )
-        ).json();
-        res.succeed && console.log(`fetchGithub from api: ${type} / ${rest}`);
-        return res.message;
-    } catch (e) {
-        console.log(`co loi o fetchGithub: ${e}`);
-        return null;
     }
-});
+);
 
 export type fetchParamsPairObjType = {
     [key: string]: {
