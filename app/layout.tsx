@@ -36,6 +36,7 @@ export default async function RootLayout({
             }
         >
             <body className={font.className}>
+                <link rel="icon" href="/favi.ico" sizes="any" />
                 {/*<SVGFilter />*/}
                 <ScrollbarSize />
                 <NavServer />
