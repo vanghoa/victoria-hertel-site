@@ -53,6 +53,7 @@ export async function MDXContent({
 }) {
     let code = '';
     if (compileMDX) {
+        console.log('oid page compileMDX', compileMDX);
         code = compileMDX;
     } else {
         console.log('refetch compileMDX');

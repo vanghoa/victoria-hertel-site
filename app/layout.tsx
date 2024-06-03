@@ -38,7 +38,7 @@ export default async function RootLayout({
             <body className={font.className}>
                 {/*<SVGFilter />*/}
                 <ScrollbarSize />
-                {/* <NavServer /> */}
+                <NavServer />
                 {children}
             </body>
         </html>
