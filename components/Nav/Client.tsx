@@ -233,8 +233,8 @@ export const WalkReactDir = ({
     currentslug: string;
     isCurrentOid: boolean;
 }) => {
-    const treekeys = Object.keys(tree);
-    return treekeys.map((key, i) => {
+    const treekeys = tree.__treekeys || Object.keys(tree);
+    return treekeys.map((key: string, i: number) => {
         const style = { zIndex: `${treekeys.length - i}` };
         if (tree[key].type === 'folder') {
             return (

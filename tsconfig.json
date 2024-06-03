@@ -27,7 +27,9 @@
         "**/*.tsx",
         ".next/types/**/*.ts",
         "utils/Curtains/TextTexture.js",
-        "utils/rehype-image-size.mjs"
+        "utils/rehype-image-size.mjs",
+        "utils/rehype-video-validate.mjs",
+        "utils/rehype-slideshow.mjs"
     ],
     "exclude": ["node_modules"]
 }

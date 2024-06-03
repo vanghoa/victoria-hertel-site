@@ -1,5 +1,5 @@
 'use client';
-import { pixelation } from '@/utils/constants/others';
+import { pixelation, pixelationhome } from '@/utils/constants/others';
 import {
     blurPixelatedFs,
     fs,
@@ -11,11 +11,14 @@ import { Curtains, Plane, ShaderPass } from 'curtainsjs';
 import {
     ImgHTMLAttributes,
     ReactNode,
+    RefObject,
+    SetStateAction,
     useEffect,
     useRef,
     useState,
 } from 'react';
 import Image from 'next/image';
+import { ISizeCalculationResult } from 'image-size/dist/types/interface';
 
 export default function PageClient({ children }: { children: ReactNode }) {
     const canvasRef = useRef<HTMLDivElement>(null);
@@ -23,7 +26,7 @@ export default function PageClient({ children }: { children: ReactNode }) {
     const [FrameClass, setFrameClass] = useState('init');
 
     useEffect(() => {
-        let curtains: Curtains | false = false;
+        let curtains: Curtains | null = null;
         if (!contentRef.current) {
             return;
         }
@@ -41,65 +44,74 @@ export default function PageClient({ children }: { children: ReactNode }) {
             return top <= innerHeight && left <= innerWidth;
         });
         //
-        const timeout = setTimeout(() => {
-            if (!canvasRef.current) {
-                return;
-            }
-            // create curtains instance
-            curtains = new Curtains({
-                container: canvasRef.current,
-                antialias: false, // render targets will disable default antialiasing anyway
-                pixelRatio: pixelation.retina_scaling
-                    ? Math.min(1.5, window.devicePixelRatio)
-                    : 1, // limit pixel ratio for performance
-                renderingScale:
-                    window.devicePixelRatio > 1 ? pixelation.quality : 0.3,
-                premultipliedAlpha: true,
-                watchScroll: false,
-                depth: false,
-            });
-            /* postProcessing */
-            let curtainsBBox = curtains.getBoundingRect();
-            const pixelationPass = new ShaderPass(curtains, {
-                fragmentShader: blurPixelatedFs,
-                uniforms: {
-                    granularity: {
-                        name: 'uGranularity',
-                        type: '1f',
-                        value: pixelation.max,
-                    },
-                    resolution: {
-                        name: 'uResolution',
-                        type: '2f',
-                        value: [curtainsBBox.width, curtainsBBox.height],
-                    },
-                    resUnit: {
-                        name: 'uResUnit',
-                        type: '2f',
-                        value: [
-                            Math.ceil(
-                                curtainsBBox.width / pixelation.pixel_unit
-                            ),
-                            Math.ceil(
-                                curtainsBBox.height / pixelation.pixel_unit
-                            ),
-                        ],
-                    },
-                    time: {
-                        name: 'uTime',
-                        type: '1f',
-                        value: 0,
-                    },
-                    step: {
-                        name: 'uStep',
-                        type: '1f',
-                        value: pixelation.step,
-                    },
-                },
-            });
-            pixelationPass
-                .onRender(() => {
-                    /*
+        const timeout = setTimeout(
+            textEls.length > 0 || mediaEls.length > 0
+                ? () => {
+                      if (!canvasRef.current) {
+                          return;
+                      }
+                      // create curtains instance
+                      curtains = new Curtains({
+                          container: canvasRef.current,
+                          antialias: false, // render targets will disable default antialiasing anyway
+                          pixelRatio: pixelation.retina_scaling
+                              ? Math.min(1.5, window.devicePixelRatio)
+                              : 1, // limit pixel ratio for performance
+                          renderingScale:
+                              window.devicePixelRatio > 1
+                                  ? pixelation.quality
+                                  : 0.3,
+                          premultipliedAlpha: true,
+                          watchScroll: false,
+                          depth: false,
+                      });
+                      /* postProcessing */
+                      let curtainsBBox = curtains.getBoundingRect();
+                      const pixelationPass = new ShaderPass(curtains, {
+                          fragmentShader: blurPixelatedFs,
+                          uniforms: {
+                              granularity: {
+                                  name: 'uGranularity',
+                                  type: '1f',
+                                  value: pixelation.max,
+                              },
+                              resolution: {
+                                  name: 'uResolution',
+                                  type: '2f',
+                                  value: [
+                                      curtainsBBox.width,
+                                      curtainsBBox.height,
+                                  ],
+                              },
+                              resUnit: {
+                                  name: 'uResUnit',
+                                  type: '2f',
+                                  value: [
+                                      Math.ceil(
+                                          curtainsBBox.width /
+                                              pixelation.pixel_unit
+                                      ),
+                                      Math.ceil(
+                                          curtainsBBox.height /
+                                              pixelation.pixel_unit
+                                      ),
+                                  ],
+                              },
+                              time: {
+                                  name: 'uTime',
+                                  type: '1f',
+                                  value: 0,
+                              },
+                              step: {
+                                  name: 'uStep',
+                                  type: '1f',
+                                  value: pixelation.step,
+                              },
+                          },
+                      });
+                      pixelationPass
+                          .onRender(() => {
+                              /*
                 percentage--;
                 let granularity =
                     pixelation.min +
@@ -115,102 +127,109 @@ export default function PageClient({ children }: { children: ReactNode }) {
                     curtains && curtains.dispose();
                 }
                 */
-                    const u = pixelationPass.uniforms;
-                    // @ts-ignore
-                    u.time.value += 3.5 * u.resUnit.value[0];
-                    // @ts-ignore
-                    if (
-                        // @ts-ignore
-                        u.time.value > // @ts-ignore
-                        u.resUnit.value[0] * u.resUnit.value[1]
-                    ) {
-                        u.time.value = 0;
-                        // @ts-ignore
-                        u.step.value -= pixelation.step_;
-                        // @ts-ignore
-                        u.step.value < 1 && (u.step.value = 1);
-                        // @ts-ignore
-                        u.granularity.value -= u.step.value;
-                    }
-                    // @ts-ignore
-                    if (u.granularity.value <= 2) {
-                        setFrameClass('hide_canvas');
-                        curtains && curtains.disableDrawing();
-                        setTimeout(() => {
-                            curtains && curtains.dispose();
-                        }, 100);
-                    }
-                })
-                .onAfterResize(() => {
-                    if (!curtains) return;
-                    curtainsBBox = curtains.getBoundingRect();
-                    pixelationPass.uniforms.resolution.value = [
-                        curtainsBBox.width,
-                        curtainsBBox.height,
-                    ];
-                    pixelationPass.uniforms.resUnit.value = [
-                        Math.ceil(curtainsBBox.width / pixelation.pixel_unit),
-                        Math.ceil(curtainsBBox.height / pixelation.pixel_unit),
-                    ];
-                });
-            // on success
-            curtains.onSuccess(async () => {
-                const fonts = {
-                    list: ['normal 400 1em Arial, Helvetica, sans-serif'],
-                    loaded: 0,
-                };
-                if (!contentRef.current || !curtains) {
-                    return;
-                }
-                for (let i = 0; i < mediaEls.length; i++) {
-                    console.log('media');
-                    const plane = new Plane(curtains, mediaEls[i], {
-                        vertexShader: vs,
-                        fragmentShader: fs,
-                        widthSegments: 25,
-                        heightSegments: 25,
-                        transparent: true,
-                        depthTest: false,
-                    });
-                }
-                for (let i = 0; i < textEls.length; i++) {
-                    console.log('text');
-                    const plane = new Plane(curtains, textEls[i], {
-                        vertexShader: vs,
-                        fragmentShader: fs,
-                        widthSegments: 25,
-                        heightSegments: 25,
-                        transparent: true,
-                        depthTest: false,
-                    });
-                    // create the text texture
-                    const textTexture = new TextTexture({
-                        plane: plane,
-                        textElement: plane.htmlElement,
-                        sampler: 'planeTexture',
-                        resolution: 1.5,
-                        skipFontLoading: true,
-                        adjustAscenderRatio: 0,
-                    });
-                }
-                setFrameClass('');
-                return;
-                // load the fonts first
-                await Promise.all(
-                    fonts.list.map(async (font) => {
-                        await document.fonts.load(font);
-                    })
-                );
+                              const u = pixelationPass.uniforms;
+                              // @ts-ignore
+                              u.time.value += 3.5 * u.resUnit.value[0];
+                              // @ts-ignore
+                              if (
+                                  // @ts-ignore
+                                  u.time.value > // @ts-ignore
+                                  u.resUnit.value[0] * u.resUnit.value[1]
+                              ) {
+                                  u.time.value = 0;
+                                  // @ts-ignore
+                                  u.step.value -= pixelation.step_;
+                                  // @ts-ignore
+                                  u.step.value < 1 && (u.step.value = 1);
+                                  // @ts-ignore
+                                  u.granularity.value -= u.step.value;
+                              }
+                              // @ts-ignore
+                              if (u.granularity.value <= 2) {
+                                  setFrameClass('hide_canvas');
+                                  curtains && curtains.disableDrawing();
+                                  setTimeout(() => {
+                                      curtains && curtains.dispose();
+                                  }, 100);
+                              }
+                          })
+                          .onAfterResize(() => {
+                              if (!curtains) return;
+                              curtainsBBox = curtains.getBoundingRect();
+                              pixelationPass.uniforms.resolution.value = [
+                                  curtainsBBox.width,
+                                  curtainsBBox.height,
+                              ];
+                              pixelationPass.uniforms.resUnit.value = [
+                                  Math.ceil(
+                                      curtainsBBox.width / pixelation.pixel_unit
+                                  ),
+                                  Math.ceil(
+                                      curtainsBBox.height /
+                                          pixelation.pixel_unit
+                                  ),
+                              ];
+                          });
+                      // on success
+                      curtains.onSuccess(async () => {
+                          const fonts = {
+                              list: [
+                                  'normal 400 1em Arial, Helvetica, sans-serif',
+                              ],
+                              loaded: 0,
+                          };
+                          if (!contentRef.current || !curtains) {
+                              return;
+                          }
+                          for (let i = 0; i < mediaEls.length; i++) {
+                              console.log('media');
+                              const plane = new Plane(curtains, mediaEls[i], {
+                                  vertexShader: vs,
+                                  fragmentShader: fs,
+                                  widthSegments: 25,
+                                  heightSegments: 25,
+                                  transparent: true,
+                                  depthTest: false,
+                              });
+                          }
+                          for (let i = 0; i < textEls.length; i++) {
+                              console.log('text');
+                              const plane = new Plane(curtains, textEls[i], {
+                                  vertexShader: vs,
+                                  fragmentShader: fs,
+                                  widthSegments: 25,
+                                  heightSegments: 25,
+                                  transparent: true,
+                                  depthTest: false,
+                              });
+                              // create the text texture
+                              const textTexture = new TextTexture({
+                                  plane: plane,
+                                  textElement: plane.htmlElement,
+                                  sampler: 'planeTexture',
+                                  resolution: 1.5,
+                                  skipFontLoading: true,
+                                  adjustAscenderRatio: 0,
+                              });
+                          }
+                          setFrameClass('');
+                          return;
+                          // load the fonts first
+                          await Promise.all(
+                              fonts.list.map(async (font) => {
+                                  await document.fonts.load(font);
+                              })
+                          );
 
-                fonts.list.forEach((font) => {
-                    document.fonts.load(font).then(() => {
-                        fonts.loaded++;
+                          fonts.list.forEach((font) => {
+                              document.fonts.load(font).then(() => {
+                                  fonts.loaded++;
 
-                        if (
-                            fonts.loaded === fonts.list.length &&
-                            contentRef.current
-                        ) {
-                            /*
+                                  if (
+                                      fonts.loaded === fonts.list.length &&
+                                      contentRef.current
+                                  ) {
+                                      /*
                     // create our shader pass
                     const scrollPass = new ShaderPass(curtains, {
                         fragmentShader: scrollFs,
@@ -248,15 +267,20 @@ export default function PageClient({ children }: { children: ReactNode }) {
                         scrollPass.uniforms.scrollEffect.value = scroll.effect;
                     });
                     */
-                            // create our text planes
-                        }
-                    });
-                });
-            });
-        }, 1000);
+                                      // create our text planes
+                                  }
+                              });
+                          });
+                      });
+                  }
+                : () => {
+                      setFrameClass('hide_canvas');
+                  },
+            1000
+        );
 
         return () => {
-            clearTimeout(timeout);
+            timeout && clearTimeout(timeout);
             curtains && curtains.dispose();
         };
     }, []);

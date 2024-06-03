@@ -1,0 +1,13 @@
+diff --git a/node_modules/curtainsjs/src/core/Curtains.js b/node_modules/curtainsjs/src/core/Curtains.js
+index 9187f1f..04cff9f 100644
+--- a/node_modules/curtainsjs/src/core/Curtains.js
++++ b/node_modules/curtainsjs/src/core/Curtains.js
+@@ -160,7 +160,7 @@ export class Curtains {
+         this.container.appendChild(this.canvas);
+ 
+         // watermark
+-        console.log("curtains.js - v" + version);
++        // console.log("curtains.js - v" + version);
+ 
+         // start rendering
+         this._animationFrameID = null;

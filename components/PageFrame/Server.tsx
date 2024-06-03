@@ -2,23 +2,30 @@ import { ReactNode } from 'react';
 import PageClient from './Client';
 import { MDXCustomComponents } from '@/mdx-components';
 import rehypeImageSize from '@/utils/rehype-image-size.mjs';
+import rehypeSlideShow from '@/utils/rehype-slideshow.mjs';
+import rehypeVideoValidate, {
+    asyncRehypeVideoValidate,
+} from '@/utils/rehype-video-validate.mjs';
 import { MDXRemote, MDXRemoteProps } from 'next-mdx-remote/rsc';
 import remarkUnwrapImages from 'remark-unwrap-images';
 import { compile, run } from '@mdx-js/mdx';
 import * as runtime from 'react/jsx-runtime';
+import React from 'react';
 
 export default function PageServer({
     children,
     pgName = 'Victoria Hertel Velasco',
     date = 'XX/XX/XXXX',
+    homepage = false,
 }: {
     children: ReactNode;
     pgName?: string | ReactNode;
     date?: string | ReactNode;
+    homepage?: boolean;
 }) {
     return (
         <main className="textured_bg">
-            <PageClient>{children}</PageClient>
+            {homepage ? children : <PageClient>{children}</PageClient>}
             <section className="description">
                 <span className="left">{pgName}</span>
                 <span className="right">{date}</span>
@@ -49,13 +56,7 @@ export async function MDXContent({
         code = compileMDX;
     } else {
         console.log('refetch compileMDX');
-        code = String(
-            await compile(source, {
-                outputFormat: 'function-body',
-                rehypePlugins: [[rehypeImageSize, { root: process.cwd() }]],
-                remarkPlugins: [remarkUnwrapImages],
-            })
-        );
+        code = String(await CompileMDXFunc(source));
     }
 
     const { default: MDX } = await run(code, {
@@ -80,3 +81,15 @@ export async function MDXContent({
         />
     );
 }
+
+export const CompileMDXFunc = async (source: string) => {
+    return await compile(source, {
+        outputFormat: 'function-body',
+        rehypePlugins: [
+            [rehypeImageSize, { root: process.cwd() }],
+            asyncRehypeVideoValidate,
+            [rehypeSlideShow, { root: process.cwd() }],
+        ],
+        remarkPlugins: [remarkUnwrapImages],
+    });
+};

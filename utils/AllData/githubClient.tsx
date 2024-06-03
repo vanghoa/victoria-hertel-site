@@ -21,9 +21,7 @@ import { localDate } from '../smallUtils';
 import { generateStaticParams as generateStaticParamsTimeline } from '@/app/timeline/[oid]/[slug]/page';
 import matter from 'gray-matter';
 import parseGitDiff, { AnyChunk, GitDiff } from 'parse-git-diff';
-import { MDXContent } from '@/components/PageFrame/Server';
-import rehypeImageSize from '../rehype-image-size.mjs';
-import remarkUnwrapImages from 'remark-unwrap-images';
+import { CompileMDXFunc, MDXContent } from '@/components/PageFrame/Server';
 
 const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 
@@ -75,13 +73,7 @@ export const fetchPageContent = cache(async (oid?: string, path?: string) => {
     const fileMatter = matter(fileContent);
     return {
         matter: fileMatter,
-        compileMDX: String(
-            await compile(fileMatter.content, {
-                outputFormat: 'function-body',
-                rehypePlugins: [[rehypeImageSize, { root: process.cwd() }]],
-                remarkPlugins: [remarkUnwrapImages],
-            })
-        ),
+        compileMDX: String(await CompileMDXFunc(fileMatter.content)),
     };
 });
 

@@ -50,6 +50,7 @@ export default async function Page({
                     <br></br> at {time}
                 </>
             }
+            homepage={slug === 'home'}
         >
             <MDXContent
                 source={pageContent.matter.content}

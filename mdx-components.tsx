@@ -1,5 +1,9 @@
 import type { MDXComponents } from 'mdx/types';
 import Image from 'next/image';
+import { Vimeo, Youtube } from './components/MDXComponents/Client';
+import { Fallback } from './components/MDXComponents/Server';
+import { HomePageClient } from './components/PageFrame/HomeClient';
+import { ISizeCalculationResult } from 'image-size/dist/types/interface';
 
 export const MDXCustomComponents: MDXComponents = {
     Grid({ children }) {
@@ -7,6 +11,60 @@ export const MDXCustomComponents: MDXComponents = {
     },
     Col({ children }) {
         return <div className="col">{children}</div>;
+    },
+    Video({ src, type, width, height, thumbnail }) {
+        const params = {
+            url: src,
+            className: 'video',
+            width: '100%',
+            height: '100%',
+            controls: true,
+            playsinline: true,
+        };
+
+        return (
+            <figure
+                style={{
+                    aspectRatio: `${width} / ${height}`,
+                }}
+                className="videowrapper media-plane"
+            >
+                {(() => {
+                    switch (type) {
+                        case 'youtube':
+                            return (
+                                <>
+                                    <img
+                                        src={thumbnail}
+                                        crossOrigin=""
+                                        data-sampler="planeTexture"
+                                    />
+                                    <Youtube {...params} />
+                                </>
+                            );
+                            break;
+                        case 'vimeo':
+                            return (
+                                <>
+                                    <img
+                                        src={thumbnail}
+                                        crossOrigin=""
+                                        data-sampler="planeTexture"
+                                    />
+                                    <Vimeo {...params} />
+                                </>
+                            );
+                            break;
+                        default:
+                            return <Fallback>something is wrong</Fallback>;
+                            break;
+                    }
+                })()}
+            </figure>
+        );
+    },
+    SlideShow({ slideshow }: { slideshow: string }) {
+        return <HomePageClient slideshow={JSON.parse(slideshow)} />;
     },
     h1: ({ children }) => <h1 className="text-plane">{children}</h1>,
     h2: ({ children }) => <h2 className="text-plane">{children}</h2>,
@@ -41,6 +99,7 @@ export const MDXCustomComponents: MDXComponents = {
                     fill={true}
                     crossOrigin=""
                     data-sampler="planeTexture"
+                    sizes="(max-width: 800px) 100vw, 800px"
                 />
             </figure>
         );

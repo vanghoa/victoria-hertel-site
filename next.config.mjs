@@ -1,9 +1,16 @@
 import createMDX from '@next/mdx';
-import rehypeImageSize from './utils/rehype-image-size.mjs';
-import remarkGfm from 'remark-gfm';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    async rewrites() {
+        console.log('rewrites called');
+        return [
+            {
+                source: '/',
+                destination: '/latest/home',
+            },
+        ];
+    },
     reactStrictMode: false,
     pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
     webpack: (config, options) => {
@@ -19,10 +26,6 @@ const nextConfig = {
 
 const withMDX = createMDX({
     extension: /\.(md|mdx)$/,
-    options: {
-        rehypePlugins: [[rehypeImageSize, { root: process.cwd() }]],
-        remarkPlugins: [remarkGfm],
-    },
 });
 
 export default withMDX(nextConfig);

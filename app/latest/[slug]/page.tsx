@@ -34,10 +34,15 @@ export default async function Page({
     // const Mdx = dynamic(() => import(`@/public/content${pagepath}`));
     const fileContent = fs.readFileSync(data.path, 'utf8');
     const matterContent = matter(fileContent);
+    const asyncMDXContent = await MDXContent({ source: matterContent.content });
     return (
-        <PageServer pgName={data.name} date={'latest'}>
+        <PageServer
+            pgName={data.name}
+            date={'latest'}
+            homepage={slug === 'home'}
+        >
             {/* <Mdx/> */}
-            <MDXContent source={matterContent.content} />
+            {asyncMDXContent}
         </PageServer>
     );
 }

@@ -6,40 +6,74 @@ import {
     fetchPageCommitDetails,
 } from '@/utils/AllData/githubClient';
 import { localDate } from '@/utils/smallUtils';
-import { cache } from 'react';
+import meta from '@/public/content/meta.json';
 
-export const walkDirectory = cache(
-    (path: string = contentpath, obj: any = {}) => {
-        // need cache
-        // console.log('refetch walkdirectory');
-        let dir = fs.readdirSync(path);
-        for (let i = 0; i < dir.length; i++) {
-            let name = dir[i];
-            let target = path + '/' + name;
-            let stats = fs.statSync(target);
-            const isMD = name.endsWith('.md');
-            const isMDX = name.endsWith('.mdx');
+type PageMeta = {
+    [key: string]: {
+        order: number;
+        entries?: PageMeta;
+    };
+};
 
-            if (stats.isFile() && (isMD || isMDX)) {
-                name = name.slice(0, isMD ? -3 : -4);
-                obj[name] = {
-                    type: 'page',
-                    status: 'latest',
-                    slug: formatSlug(target),
-                    path: target,
-                };
-            } else if (stats.isDirectory()) {
-                obj[name] = {
-                    type: 'folder',
-                    status: 'latest',
-                    entries: {},
-                };
-                walkDirectory(target, obj[name].entries);
-            }
+type WalkDirectoryObj = {
+    __treekeys?: string[];
+} & {
+    [key: string]:
+        | {
+              order: number;
+              status: string;
+              type: 'folder' | 'page';
+              slug?: string;
+              path?: string;
+              entries?: WalkDirectoryObj;
+          }
+        | string[];
+};
+
+export const walkDirectory = (
+    path: string = contentpath,
+    obj: WalkDirectoryObj = {},
+    pagemeta: PageMeta = meta['page meta']
+) => {
+    // need cache
+    // console.log('refetch walkdirectory');
+    let dir = fs.readdirSync(path);
+    for (let i = 0; i < dir.length; i++) {
+        let name = dir[i];
+        let target = path + '/' + name;
+        let stats = fs.statSync(target);
+        const isMD = name.endsWith('.md');
+        const isMDX = name.endsWith('.mdx');
+
+        if (stats.isFile() && (isMD || isMDX)) {
+            name = name.slice(0, isMD ? -3 : -4);
+            obj[name] = {
+                type: 'page',
+                status: 'latest',
+                slug: formatSlug(target),
+                path: target,
+                order: pagemeta[name]?.order || 0,
+            };
+        } else if (stats.isDirectory()) {
+            obj[name] = {
+                type: 'folder',
+                status: 'latest',
+                order: pagemeta[name]?.order || 0,
+                entries: {},
+            };
+            walkDirectory(
+                target, // @ts-ignore
+                obj[name]?.entries,
+                pagemeta[name]?.entries || {}
+            );
         }
-        return obj;
     }
-);
+    obj.__treekeys = Object.keys(obj).sort(
+        // @ts-ignore
+        (a, b) => obj[a].order - obj[b].order
+    );
+    return obj;
+};
 
 /* sample object structure 
 {

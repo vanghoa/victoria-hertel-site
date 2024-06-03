@@ -1,0 +1,33 @@
+{
+    "page meta": {
+        "about": {
+            "order": 2
+        },
+        "contact": {
+            "order": 1
+        },
+        "home": {
+            "order": 0
+        },
+        "portfolio": {
+            "order": 3,
+            "entries": {
+                "core, 2021": {
+                    "order": 4
+                },
+                "drop, 2022": {
+                    "order": 3
+                },
+                "scent, 2022": {
+                    "order": 2
+                },
+                "steps, 2022": {
+                    "order": 1
+                },
+                "times, 2023": {
+                    "order": 0
+                }
+            }
+        }
+    }
+}
