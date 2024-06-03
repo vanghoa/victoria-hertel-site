@@ -12,6 +12,11 @@ const nextConfig = {
             },
         ];
     },
+    experimental: {
+        outputFileTracingIncludes: {
+            '/assets': ['./public/**/*'],
+        },
+    },
     reactStrictMode: false,
     pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
     webpack: (config, options) => {
