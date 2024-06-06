@@ -8,13 +8,6 @@ export async function GET(request: NextRequest) {
         revalidateTag('fetchNavData');
         revalidateTag('fetchPageCommitDetails');
         revalidateTag('fetchParamsPairObj');
-
-        if (REFETCH_PG_CONTENT == 'true') {
-            revalidateTag('fetchPageContent');
-            console.log('REFETCH_PG_CONTENT ok');
-        }
-
-        console.log('REFETCH_PG_CONTENT is', REFETCH_PG_CONTENT == 'true');
         return NextResponse.json({
             revalidated: true,
             now: Date.now(),
