@@ -5,6 +5,7 @@ import { Curtains, Plane, ShaderPass } from 'curtainsjs';
 import { SetStateAction, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { ISizeCalculationResult } from 'image-size/dist/types/interface';
+import PageVisibility, { usePageVisibility } from 'react-page-visibility';
 
 export const HomePageClient = ({
     slideshow,
@@ -17,12 +18,21 @@ export const HomePageClient = ({
     const firstUpdate = useRef(true);
     const canvasRef = useRef<HTMLDivElement>(null);
     const contentRef = useRef<HTMLDivElement>(null);
+    const intervalRef = useRef<NodeJS.Timeout | null>(null);
+    const curtainsRef = useRef<Curtains | null>(null);
     const [FrameClass, setFrameClass] = useState('init');
     const [current, setCurrent] = useState(0);
 
-    useEffect(() => {
-        let curtains: Curtains | null = null;
-        const intervalId = setInterval(() => {
+    const StopInterval = () => {
+        curtainsRef.current && curtainsRef.current.dispose();
+        intervalRef.current && clearInterval(intervalRef.current);
+        curtainsRef.current = null;
+    };
+
+    const StartInterval = () => {
+        // let curtains: Curtains | null = null;
+        StopInterval();
+        intervalRef.current = setInterval(() => {
             if (!contentRef.current || !canvasRef.current) {
                 return;
             }
@@ -30,18 +40,18 @@ export const HomePageClient = ({
             if (!mediaEl) {
                 return;
             }
-            curtains = curtainGeneration(
+            curtainsRef.current = curtainGeneration(
                 canvasRef.current,
                 mediaEl,
                 setFrameClass
             );
             /* postProcessing */
-            let curtainsBBox = curtains.getBoundingRect();
+            let curtainsBBox = curtainsRef.current.getBoundingRect();
             const resUnit = [
                 Math.ceil(curtainsBBox.width / pixelationhome.pixel_unit),
                 Math.ceil(curtainsBBox.height / pixelationhome.pixel_unit),
             ];
-            const pixelationPass = new ShaderPass(curtains, {
+            const pixelationPass = new ShaderPass(curtainsRef.current, {
                 fragmentShader: blurPixelatedFs,
                 uniforms: {
                     granularity: {
@@ -93,9 +103,12 @@ export const HomePageClient = ({
                     }
                     // @ts-ignore
                     if (u.granularity.value > pixelationhome.max) {
-                        curtains && curtains.disableDrawing();
+                        curtainsRef.current &&
+                            curtainsRef.current.disableDrawing();
                         setTimeout(() => {
-                            curtains && curtains.dispose();
+                            curtainsRef.current &&
+                                curtainsRef.current.dispose();
+                            curtainsRef.current = null;
                             setCurrent((cur) => {
                                 if (cur >= slideshow.length - 1) {
                                     return 0;
@@ -106,12 +119,26 @@ export const HomePageClient = ({
                         }, 100);
                     }
                 })
-                .onAfterResize(onAfterResize(curtains, pixelationPass));
+                .onAfterResize(
+                    onAfterResize(curtainsRef.current, pixelationPass)
+                );
             //
         }, 12000);
+    };
+
+    const handleVisibilityChange = (isVisible: boolean) => {
+        if (isVisible) {
+            StartInterval();
+        } else {
+            StopInterval();
+            setFrameClass('hide_canvas');
+        }
+    };
+
+    useEffect(() => {
+        StartInterval();
         return () => {
-            curtains && curtains.dispose();
-            clearInterval(intervalId);
+            StopInterval();
         }; //This is important
     }, []);
 
@@ -220,46 +247,48 @@ export const HomePageClient = ({
     }, [current]);
 
     return (
-        <section id="page_section" className={`image ${FrameClass}`}>
-            <div id="page_frame" className={`homepage`}>
-                <div ref={canvasRef} id="canvas"></div>
-                <div ref={contentRef} id="content">
-                    {slideshow.map((slide, i) => {
-                        const width = slide.size.width || 0;
-                        const height = slide.size.height || 0;
-                        return (
-                            <div
-                                key={i}
-                                className={`${
-                                    i == current ? 'home-plane' : ''
-                                }`}
-                            >
+        <PageVisibility onChange={handleVisibilityChange}>
+            <section id="page_section" className={`image ${FrameClass}`}>
+                <div id="page_frame" className={`homepage`}>
+                    <div ref={canvasRef} id="canvas"></div>
+                    <div ref={contentRef} id="content">
+                        {slideshow.map((slide, i) => {
+                            const width = slide.size.width || 0;
+                            const height = slide.size.height || 0;
+                            return (
                                 <div
-                                    style={{
-                                        aspectRatio: ` ${width} / ${height}`,
-                                        ...{
-                                            [width > height
-                                                ? 'maxHeight'
-                                                : 'maxWidth']: 'unset',
-                                        },
-                                    }}
+                                    key={i}
+                                    className={`${
+                                        i == current ? 'home-plane' : ''
+                                    }`}
                                 >
-                                    <Image
-                                        src={`/assets${slide.src}`}
-                                        alt="image slideshow"
-                                        sizes="(max-width: 800px) 100vw, 800px"
-                                        fill={true}
-                                        crossOrigin=""
-                                        data-sampler="planeTexture"
-                                        priority
-                                    />
+                                    <div
+                                        style={{
+                                            aspectRatio: ` ${width} / ${height}`,
+                                            ...{
+                                                [width > height
+                                                    ? 'maxHeight'
+                                                    : 'maxWidth']: 'unset',
+                                            },
+                                        }}
+                                    >
+                                        <Image
+                                            src={`/assets${slide.src}`}
+                                            alt="image slideshow"
+                                            sizes="(max-width: 800px) 100vw, 800px"
+                                            fill={true}
+                                            crossOrigin=""
+                                            data-sampler="planeTexture"
+                                            priority
+                                        />
+                                    </div>
                                 </div>
-                            </div>
-                        );
-                    })}
+                            );
+                        })}
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
+        </PageVisibility>
     );
 };
 
