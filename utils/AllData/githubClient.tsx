@@ -242,8 +242,10 @@ export const fetchPageContent = cache(
                         const { lineBefore, content } = change;
                         const index = lineBefore + index_offset - 1;
                         const out = DiffParseContent(content, attr('deleted'));
-                        out && fileContentArr.splice(index, 0, out);
-                        index_offset++;
+                        if (out != undefined) {
+                            fileContentArr.splice(index, 0, out);
+                            index_offset++;
+                        }
                     }
                 }
             }

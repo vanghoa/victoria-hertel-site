@@ -1,3 +1,32 @@
+#page_section.hide_canvas #content {
+    .added,
+    [status='added'] {
+        background-color: var(--lightgreen);
+    }
+
+    .deleted,
+    [status='deleted'] {
+        background-color: var(--lightred);
+    }
+
+    .media-plane,
+    .col {
+        &.added,
+        &[status='added'] {
+            &::after {
+                background-color: var(--lightgreen);
+            }
+        }
+
+        &.deleted,
+        &[status='deleted'] {
+            &::after {
+                background-color: var(--lightred);
+            }
+        }
+    }
+}
+
 #content {
     padding-top: 4rem;
 
@@ -81,13 +110,11 @@
     }
 
     .added,
-    [status='added'] {
-        background-color: var(--lightgreen);
-    }
-
+    [status='added'],
     .deleted,
     [status='deleted'] {
-        background-color: var(--lightred);
+        background-color: transparent;
+        transition: background-color 1s 0.5s;
     }
 
     .media-plane,
@@ -104,16 +131,10 @@
                 left: 0;
                 top: 0;
                 z-index: 2;
-                background-color: var(--lightgreen);
                 opacity: 0.5;
                 pointer-events: none;
-            }
-        }
-
-        &.deleted,
-        &[status='deleted'] {
-            &::after {
-                background-color: var(--lightred);
+                background-color: transparent;
+                transition: background-color 1s 0.5s;
             }
         }
     }

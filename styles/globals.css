@@ -391,17 +391,17 @@ nav.timeline :is(.timeline_nav, .filter_nav) button {
     box-shadow: 0px -10px 15px -2px rgba(0, 0, 0, 0.1);
 }
 */
-nav.timeline .removed > .textured_bg,
+nav .removed > .textured_bg,
 nav .filter_nav .red,
 nav .filter_nav .red .textured_bg {
     background-color: var(--lightred);
 }
-nav.timeline :is(.added, .renamed) > .textured_bg,
+nav :is(.added, .renamed) > .textured_bg,
 nav .filter_nav .green,
 nav .filter_nav .green .textured_bg {
     background-color: var(--lightgreen);
 }
-nav.timeline .modified > .textured_bg,
+nav .modified > .textured_bg,
 nav .filter_nav .blue,
 nav .filter_nav .blue .textured_bg {
     background-color: var(--lightblue);
@@ -494,7 +494,6 @@ nav .nested.close .nested {
     background-color: var(--white);
     background-blend-mode: multiply;
     background-size: 5rem;
-    transition: background-color 0.5s;
 }
 
 /* svg */
