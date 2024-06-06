@@ -30,16 +30,17 @@ export default async function Page({
         patch,
         committedDate: { date, time },
         name,
+        status,
     } = gitdata;
     const pageContent: Awaited<ReturnType<typeof fetchPageContent>> =
-        await fetchGithub('fetchPageContent', oid, `${path}`);
-    if (!pageContent) {
+        await fetchGithub('fetchPageContent', oid, `${path}`, false, slug);
+    if (!pageContent || typeof pageContent == 'string') {
         return <PageError />;
     }
-    /*
     for (const chunk of patch) {
         console.log(chunk);
     }
+    /*
     console.log(matter.content);*/
     const asyncMDXContent = await MDXContent({
         source: pageContent.matter.content,
@@ -55,6 +56,7 @@ export default async function Page({
                 </>
             }
             homepage={slug === 'home'}
+            status={status}
         >
             {asyncMDXContent}
         </PageServer>

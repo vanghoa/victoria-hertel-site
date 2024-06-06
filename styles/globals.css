@@ -511,6 +511,9 @@ svg {
 #page_section.init {
     background-color: var(--white);
 }
+main:is(.added, .renamed) #page_section {
+    background-color: var(--lightgreen);
+}
 #page_frame {
     position: absolute;
     right: 0;

@@ -24,7 +24,6 @@ export const rehypeImageSize = (options) => {
             }
             const imagePath = `${slug}${node.properties.src}`;
             try {
-                console.log(`path bip: ${imagePath}`);
                 const imageSize = getImageSize(imagePath);
                 node.properties.width = imageSize.width;
                 node.properties.height = imageSize.height;
@@ -33,35 +32,39 @@ export const rehypeImageSize = (options) => {
             }
         });
         // This matches all MDX' <Image /> components.
-        // Feel free to update it if you're using a different component name.
-        visit(tree, { type: 'mdxJsxFlowElement', name: 'Image' }, (node) => {
+        visit(tree, { type: 'mdxJsxTextElement', name: 'Image' }, mdxJSXElem);
+        visit(tree, { type: 'mdxJsxFlowElement', name: 'Image' }, mdxJSXElem);
+
+        function mdxJSXElem(node) {
             const srcAttr = node.attributes?.find(
                 (attr) => attr.name === 'src'
             );
             const imagePath = `${slug}${srcAttr.value}`;
-            const imageSize = getImageSize(imagePath);
-            const widthAttr = node.attributes?.find(
-                (attr) => attr.name === 'width'
-            );
-            const heightAttr = node.attributes?.find(
-                (attr) => attr.name === 'height'
-            );
-            if (widthAttr || heightAttr) {
-                // If `width` or `height` have already been set explicitly we
-                // don't want to override them.
-                return;
+            try {
+                const imageSize = getImageSize(imagePath);
+                const widthAttr = node.attributes?.find(
+                    (attr) => attr.name === 'width'
+                );
+                const heightAttr = node.attributes?.find(
+                    (attr) => attr.name === 'height'
+                );
+                if (widthAttr || heightAttr) {
+                    return;
+                }
+                node.attributes.push({
+                    type: 'mdxJsxAttribute',
+                    name: 'width',
+                    value: imageSize.width,
+                });
+                node.attributes.push({
+                    type: 'mdxJsxAttribute',
+                    name: 'height',
+                    value: imageSize.height,
+                });
+            } catch (error) {
+                console.log(error);
             }
-            node.attributes.push({
-                type: 'mdxJsxAttribute',
-                name: 'width',
-                value: imageSize.width,
-            });
-            node.attributes.push({
-                type: 'mdxJsxAttribute',
-                name: 'height',
-                value: imageSize.height,
-            });
-        });
+        }
     };
 };
 

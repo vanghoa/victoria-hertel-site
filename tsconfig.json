@@ -29,7 +29,8 @@
         "utils/Curtains/TextTexture.js",
         "utils/rehype-image-size.mjs",
         "utils/rehype-video-validate.mjs",
-        "utils/rehype-slideshow.mjs"
+        "utils/rehype-slideshow.mjs",
+        "utils/rehype-span-validate.mjs"
     ],
     "exclude": ["node_modules"]
 }

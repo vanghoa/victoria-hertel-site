@@ -1,5 +1,6 @@
 'use client'; // Error components must be Client Components
 
+import PageClient from '@/components/PageFrame/Client';
 import { useEffect } from 'react';
 
 export default function Error({
@@ -15,16 +16,23 @@ export default function Error({
     }, [error]);
 
     return (
-        <div>
-            <h2>Something went wrong!</h2>
-            <button
-                onClick={
-                    // Attempt to recover by trying to re-render the segment
-                    () => reset()
-                }
-            >
-                Try again
-            </button>
-        </div>
+        <main className="textured_bg">
+            <PageClient>
+                <h2 className="text-plane">Something went wrong!</h2>
+                <button
+                    className="text-plane"
+                    onClick={
+                        // Attempt to recover by trying to re-render the segment
+                        () => reset()
+                    }
+                >
+                    Try again
+                </button>
+            </PageClient>
+            <section className="description">
+                <span className="left">error</span>
+                <span className="right">error</span>
+            </section>
+        </main>
     );
 }

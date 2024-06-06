@@ -9,10 +9,10 @@ export const MDXCustomComponents: MDXComponents = {
     Grid({ children }) {
         return <section className="grid">{children}</section>;
     },
-    Col({ children }) {
-        return <div className="col">{children}</div>;
+    Col({ children, status }) {
+        return <div className={`col ${status || ''}`}>{children}</div>;
     },
-    Video({ src, type, width, height, thumbnail }) {
+    Video({ src, type, width, height, thumbnail, status }) {
         const params = {
             url: src,
             className: 'video',
@@ -27,7 +27,7 @@ export const MDXCustomComponents: MDXComponents = {
                 style={{
                     aspectRatio: `${width} / ${height}`,
                 }}
-                className="videowrapper media-plane"
+                className={`videowrapper media-plane ${status || ''}`}
             >
                 {(() => {
                     switch (type) {
@@ -65,6 +65,45 @@ export const MDXCustomComponents: MDXComponents = {
     },
     SlideShow({ slideshow }: { slideshow: string }) {
         return <HomePageClient slideshow={JSON.parse(slideshow)} />;
+    },
+    Span: ({ children, status, isTop }) => {
+        if (isTop)
+            return <p className={`text-plane ${status || ''}`}>{children}</p>;
+        return <span className={`${status || ''}`}>{children}</span>;
+    },
+    P: ({ children, status }) => {
+        return <span className={`text-plane`}>{children}</span>;
+    },
+    Image: ({ src, alt, width, height, status }) => {
+        if (!src) {
+            return (
+                <figure className={`${status || ''}`}>
+                    <img src={src} alt={'empty source'}></img>
+                </figure>
+            );
+        }
+        if (!width || !height) {
+            return (
+                <figure className={`${status || ''}`}>
+                    <img src={src} alt={`an image at ${src}`}></img>
+                </figure>
+            );
+        }
+        return (
+            <figure
+                style={{ aspectRatio: `${width} / ${height}` }}
+                className={`media-plane ${status || ''}`}
+            >
+                <Image
+                    src={`/assets${src}`}
+                    alt={alt || `an image at ${src}`}
+                    fill={true}
+                    crossOrigin=""
+                    data-sampler="planeTexture"
+                    sizes="(max-width: 800px) 100vw, 800px"
+                />
+            </figure>
+        );
     },
     h1: ({ children }) => <h1 className="text-plane">{children}</h1>,
     h2: ({ children }) => <h2 className="text-plane">{children}</h2>,

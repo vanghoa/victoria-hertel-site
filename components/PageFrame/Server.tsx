@@ -6,25 +6,29 @@ import rehypeSlideShow from '@/utils/rehype-slideshow.mjs';
 import rehypeVideoValidate, {
     asyncRehypeVideoValidate,
 } from '@/utils/rehype-video-validate.mjs';
+import rehypeSpanValidate from '@/utils/rehype-span-validate.mjs';
 import { MDXRemote, MDXRemoteProps } from 'next-mdx-remote/rsc';
 import remarkUnwrapImages from 'remark-unwrap-images';
 import { compile, run } from '@mdx-js/mdx';
 import * as runtime from 'react/jsx-runtime';
 import React from 'react';
+import { AnyChunk } from 'parse-git-diff';
 
 export default function PageServer({
     children,
     pgName = 'Victoria Hertel Velasco',
     date = 'XX/XX/XXXX',
     homepage = false,
+    status = '',
 }: {
     children: ReactNode;
     pgName?: string | ReactNode;
     date?: string | ReactNode;
     homepage?: boolean;
+    status?: string;
 }) {
     return (
-        <main className="textured_bg">
+        <main className={`textured_bg ${status}`}>
             {homepage ? children : <PageClient>{children}</PageClient>}
             <section className="description">
                 <span className="left">{pgName}</span>
@@ -89,6 +93,7 @@ export const CompileMDXFunc = async (source: string) => {
         rehypePlugins: [
             [rehypeImageSize, { root: process.cwd() }],
             asyncRehypeVideoValidate,
+            rehypeSpanValidate,
             [rehypeSlideShow, { root: process.cwd() }],
         ],
         remarkPlugins: [remarkUnwrapImages],

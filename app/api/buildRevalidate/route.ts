@@ -1,12 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidateTag } from 'next/cache';
 
+const REFETCH_PG_CONTENT = process.env.REFETCH_PG_CONTENT;
+
 export async function GET(request: NextRequest) {
     try {
         revalidateTag('fetchNavData');
         revalidateTag('fetchPageCommitDetails');
         revalidateTag('fetchParamsPairObj');
 
+        if (REFETCH_PG_CONTENT == 'true') {
+            revalidateTag('fetchPageContent');
+            console.log('REFETCH_PG_CONTENT');
+        }
         return NextResponse.json({
             revalidated: true,
             now: Date.now(),

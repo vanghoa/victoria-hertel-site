@@ -7,7 +7,14 @@ import {
     contentpatharr,
     getAPIRoutePath,
 } from '../constants/paths';
-import { compile } from '@mdx-js/mdx';
+import { mdxjs } from 'micromark-extension-mdxjs';
+import { fromMarkdown } from 'mdast-util-from-markdown';
+import {
+    mdxFromMarkdown,
+    mdxToMarkdown,
+    MdxJsxAttribute,
+} from 'mdast-util-mdx';
+import { toMarkdown } from 'mdast-util-to-markdown';
 
 // graphql query
 import navQuery from './graphql/test.graphql';
@@ -78,7 +85,12 @@ const fetchPageMeta = async (entries: [], oid: string) => {
 };
 
 export const fetchPageContent = cache(
-    async (oid?: string, path?: string, contentOnly: boolean = false) => {
+    async (
+        oid?: string,
+        path?: string,
+        contentOnly: boolean = false,
+        slug?: string
+    ) => {
         console.log(`refetch PageContent ${oid} / ${path}:`);
         const data: any = await graphql(
             `
@@ -103,11 +115,145 @@ export const fetchPageContent = cache(
                 ...headers,
             }
         );
-        const fileContent = data?.repository?.content?.text || '';
+        let fileContent: string = data?.repository?.content?.text || '';
         if (contentOnly) {
             return fileContent;
         }
+        /* patch */
+        const paramsPairObj: Awaited<ReturnType<typeof fetchParamsPairObj>> =
+            await fetchGithub('fetchParamsPairObj');
+        const gitdata = paramsPairObj?.[oid || '']?.[slug || ''];
+        const { patch } = gitdata;
+        const fileContentArr = fileContent.split('\n');
+        const attr = (
+            value: 'added' | 'deleted'
+        ): {
+            type: 'mdxJsxAttribute';
+            name: 'status';
+            value: 'added' | 'deleted';
+        } => ({
+            type: 'mdxJsxAttribute',
+            name: 'status',
+            value,
+        });
+        const DiffParseContent = (content: string, attr: MdxJsxAttribute) => {
+            try {
+                const tree = fromMarkdown(content, {
+                    extensions: [mdxjs()],
+                    mdastExtensions: [mdxFromMarkdown()],
+                });
+                for (const eli in tree.children) {
+                    const el = tree.children[eli];
+                    const { type } = el;
+                    if (type == 'mdxJsxFlowElement') {
+                        el.attributes.push(attr);
+                    } else if ('children' in el) {
+                        let spancounter = 0;
+                        for (let el_i in el.children) {
+                            const { type: type_ } = el.children[el_i];
+                            if (type_ == 'mdxJsxTextElement') {
+                                el.children[
+                                    el_i // @ts-ignore
+                                ].attributes.push(attr);
+                            } else if (type_ == 'image') {
+                                el.children[el_i] = {
+                                    type: 'mdxJsxTextElement',
+                                    name: 'Image',
+                                    attributes: [
+                                        {
+                                            type: 'mdxJsxAttribute',
+                                            name: 'src',
+                                            value: el.children[
+                                                el_i // @ts-ignore
+                                            ].url,
+                                        },
+                                        {
+                                            type: 'mdxJsxAttribute',
+                                            name: 'alt',
+                                            value: el.children[
+                                                el_i // @ts-ignore
+                                            ].alt,
+                                        },
+                                        attr,
+                                    ],
+                                    children: [],
+                                };
+                            } else {
+                                spancounter++;
+                                el.children[el_i] = {
+                                    type: 'mdxJsxTextElement',
+                                    name: 'Span',
+                                    attributes: [attr],
+                                    children: [
+                                        // @ts-ignore
+                                        el.children[el_i],
+                                    ],
+                                    position: el.children[el_i].position,
+                                };
+                            }
+                        }
+                        if (
+                            spancounter == el.children.length &&
+                            type == 'paragraph'
+                        ) {
+                            tree.children[eli] = {
+                                type: 'mdxJsxTextElement',
+                                name: 'P',
+                                attributes: [attr], // @ts-ignore
+                                children: el.children,
+                                position: el.position,
+                            };
+                        }
+                    }
+                }
+                console.log(tree, 'tree');
+                const out = toMarkdown(tree, {
+                    extensions: [mdxToMarkdown()],
+                });
+                console.log(out, 'out');
+                return out;
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        for (const chunk of patch) {
+            if (chunk.type == 'Chunk') {
+                const changes = chunk.changes;
+                for (const change of changes) {
+                    if (change.type == 'AddedLine') {
+                        const { lineAfter, content } = change;
+                        const index = lineAfter - 1;
+                        if (fileContentArr[index] == content) {
+                            const out = DiffParseContent(
+                                content,
+                                attr('added')
+                            );
+                            out && (fileContentArr[index] = out);
+                        }
+                    }
+                }
+            }
+        }
+        let index_offset = 0;
+        for (const chunk of patch) {
+            if (chunk.type == 'Chunk') {
+                const changes = chunk.changes;
+                for (const change of changes) {
+                    if (change.type == 'DeletedLine') {
+                        const { lineBefore, content } = change;
+                        const index = lineBefore + index_offset - 1;
+                        const out = DiffParseContent(content, attr('deleted'));
+                        out && fileContentArr.splice(index, 0, out);
+                        index_offset++;
+                    }
+                }
+            }
+        }
+        fileContent = fileContentArr.join('\n');
+        /* */
+
         const fileMatter = matter(fileContent);
+
         return {
             matter: fileMatter,
             compileMDX: String(await CompileMDXFunc(fileMatter.content)),
