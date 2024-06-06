@@ -37,10 +37,10 @@ export default async function Page({
     if (!pageContent || typeof pageContent == 'string') {
         return <PageError />;
     }
+    /*
     for (const chunk of patch) {
         console.log(chunk);
     }
-    /*
     console.log(matter.content);*/
     const asyncMDXContent = await MDXContent({
         source: pageContent.matter.content,

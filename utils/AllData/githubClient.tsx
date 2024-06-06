@@ -206,11 +206,10 @@ export const fetchPageContent = cache(
                         }
                     }
                 }
-                console.log(tree, 'tree');
                 const out = toMarkdown(tree, {
                     extensions: [mdxToMarkdown()],
                 });
-                console.log(out, 'out');
+                console.log('parse success');
                 return out;
             } catch (error) {
                 console.log(error);
