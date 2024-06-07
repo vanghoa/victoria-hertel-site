@@ -4,12 +4,13 @@
     --lightred: rgb(255, 210, 214);
     --lightgreen: rgb(203, 255, 203);
     --lightblue: rgb(202, 224, 255);
+    --lightyellow: rgb(255, 238, 141);
     --left_offset_polaroid: 2rem;
     --padding_polaroid: 1rem;
     --nav_gap: 4.8rem;
     --nav_gap_offset: 0rem;
     --nav_gap_close_offset: 0.5rem;
-    --nav_top_offset_original: 10rem;
+    --nav_top_offset_original: 0rem;
     --nav_top_offset: var(--nav_gap);
     --nav_left_offset: -2rem;
     --nav_frame_width: 15rem;
@@ -196,6 +197,37 @@ nav .extraspace .outer {
 
 nav .image {
     aspect-ratio: 1/1;
+    text-align: center;
+    line-height: 1.15rem;
+    flex-grow: 0 !important;
+}
+
+nav .image .imagecontent {
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 0.8rem;
+}
+
+nav.timeline .image .imagecontent {
+    opacity: 1;
+}
+
+nav .image .message {
+    font-weight: 900;
+}
+
+nav .image .committer {
+    font-style: italic;
+    margin-top: 0.5rem;
 }
 
 /* info */
@@ -253,7 +285,6 @@ nav .info .date > * {
 }
 
 nav .info .message {
-    font-size: 1.5rem;
     width: 100%;
     cursor: pointer;
     margin-top: 2rem;
@@ -265,16 +296,49 @@ nav .info .message.short {
     text-overflow: ellipsis;
 }
 
+nav .info .committer {
+    max-width: 10rem;
+    font-style: italic;
+    margin: 0 auto;
+    margin-top: 1rem;
+}
+
 nav .info * {
     color: var(--white);
 }
 
 nav .indicator {
-    opacity: 0;
-    width: var(--timeline_nav_h);
-    height: var(--timeline_nav_h);
+    color: black;
+    font-weight: 500;
+    opacity: 0.3;
+    width: fit-content;
+    height: fit-content;
+    padding: 0.9rem 1.6rem;
     border-radius: 0.3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     margin: 0 auto;
+}
+
+nav .indicator .time {
+    color: black;
+    font-style: italic;
+    line-height: 1.2rem;
+}
+
+nav .column.latest .indicator .time::after {
+    content: ' (latest)';
+}
+
+nav .indicator .fulldate {
+    color: black;
+    font-size: 1.5rem;
+}
+
+nav .column.latest .indicator {
+    background-color: var(--lightyellow);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -305,14 +369,33 @@ nav .filter_nav {
 
 nav .timeline_nav div {
     display: flex;
-    gap: 1rem;
+    gap: 1.8rem;
 }
 
 nav .timeline_nav div button {
     width: var(--timeline_nav_h);
     height: var(--timeline_nav_h);
-    background-color: var(--white);
-    border-radius: var(--timeline_nav_h);
+    background-color: transparent;
+    cursor: pointer;
+}
+
+nav .timeline_nav div button svg {
+    position: absolute;
+    top: 0;
+    height: 100%;
+}
+
+nav .timeline_nav div button svg path {
+    fill: url(#svgbg);
+}
+
+nav .timeline_nav div button:is(.back, .back_twice) svg {
+    left: 0;
+}
+
+nav .timeline_nav div button:is(.forward, .forward_twice) svg {
+    transform: rotate(180deg);
+    right: 0;
 }
 
 /* filter nav */
@@ -369,6 +452,11 @@ nav .filter_nav button .question_mark {
 
 nav .filter_nav button .question_mark span {
     mix-blend-mode: overlay;
+}
+
+nav .filter_nav button.white .question_mark span {
+    mix-blend-mode: normal;
+    opacity: 0.5;
 }
 
 nav .filter_nav button .question_mark::before {
@@ -497,9 +585,10 @@ nav .nested.close .nested {
 }
 
 /* svg */
-svg {
-    height: 0;
+.svgpattern {
     position: fixed;
+    left: 0;
+    top: 0;
     z-index: -10;
 }
 

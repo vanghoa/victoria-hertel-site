@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense } from 'react';
+import { Dispatch, SetStateAction, Suspense } from 'react';
 import { getPagePath } from '@/utils/constants/paths';
 import Link from 'next/link';
 import {
@@ -17,6 +17,8 @@ import {
     useState,
     MouseEvent,
 } from 'react';
+import Left from './SVG/left.svg';
+import DoubleLeft from './SVG/doubleleft.svg';
 
 export const NavColumn = ({
     currentoid,
@@ -41,20 +43,29 @@ export const NavColumn = ({
         committer,
     } = commit;
     const isCurrentOid = currentoid == oid;
-    const [msgShort, setMsgShort] = useState(true);
+    // const [msgShort, setMsgShort] = useState(true);
     return (
         <li
-            className={`column ${isCurrentOid ? 'current' : ''}`}
+            className={`column ${isCurrentOid ? 'current' : ''} ${
+                oid == 'latest' ? 'latest' : ''
+            }`}
             ref={columnRef}
         >
             <section className="flexcolumn">
-                <div className="info">
-                    <div className="indicator textured_bg"></div>
-                    <div className="date">
+                <div
+                    className="info"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                    }}
+                >
+                    <div className="indicator textured_bg">
+                        <span className="fulldate">{committedDate.date}</span>
+
+                        <span className="time">{committedDate.time}</span>
+                    </div>
+                    {/*<div className="date">
                         <p>{oid}</p>
                         <p>{committer?.name || 'Victoria'}</p>
-                        <p>{committedDate.date}</p>
-                        <p>{committedDate.time}</p>
                         <p className="details">
                             <span className="changed">
                                 {changedFilesIfAvailable || '0'}
@@ -66,8 +77,8 @@ export const NavColumn = ({
                                 {deletions || '0'}
                             </span>
                         </p>
-                    </div>
-                    <p
+                    </div>*/}
+                    {/*<><p
                         className={`message ${msgShort ? 'short' : ''}`}
                         onClick={(e) => {
                             e.stopPropagation();
@@ -76,6 +87,7 @@ export const NavColumn = ({
                     >
                         &ldquo;{message}&rdquo;
                     </p>
+                    <p className="committer">{committer?.name || 'Victoria'}</p></>*/}
                 </div>
                 <NavFrame
                     href={`${pathname}?type=open`}
@@ -95,6 +107,8 @@ export const NavColumn = ({
                     oid={oid}
                     isCurrentOid={isCurrentOid}
                     currentslug={currentslug}
+                    committer={committer?.name || 'Victoria'}
+                    message={message}
                 />
                 <NavFrame
                     href={`${pathname}?type=timeline`}
@@ -178,6 +192,9 @@ const NavFolder = ({
     oid,
     currentslug,
     isCurrentOid,
+    committer,
+    message,
+    children = '',
 }: {
     tree: any;
     treekey: string;
@@ -186,6 +203,9 @@ const NavFolder = ({
     oid: string;
     currentslug: string;
     isCurrentOid: boolean;
+    committer: string;
+    message: string;
+    children?: ReactNode;
 }) => {
     const [isClose, setIsClose] = useState(false);
     return (
@@ -209,13 +229,17 @@ const NavFolder = ({
                     e.stopPropagation();
                     setIsClose((value) => !value);
                 }}
-            />
+            >
+                {children}
+            </NavFrame>
             <WalkReactDir
                 oid={oid}
                 currentslug={currentslug}
                 tree={tree[treekey].entries}
                 level={level + 1}
                 isCurrentOid={isCurrentOid}
+                committer={committer}
+                message={message}
             />
         </div>
     );
@@ -227,16 +251,29 @@ export const WalkReactDir = ({
     oid,
     currentslug,
     isCurrentOid,
+    committer,
+    message,
 }: {
     tree: any;
     level?: number;
     oid: string;
     currentslug: string;
     isCurrentOid: boolean;
+    committer: string;
+    message: string;
 }) => {
     const treekeys = tree.__treekeys || Object.keys(tree);
     return treekeys.map((key: string, i: number) => {
         const style = { zIndex: `${treekeys.length - i}` };
+        const content =
+            i == 0 && level == 1 ? (
+                <div className="imagecontent">
+                    <p className="message">&ldquo;{message}&rdquo;</p>
+                    <p className="committer">{committer}</p>
+                </div>
+            ) : (
+                ''
+            );
         if (tree[key].type === 'folder') {
             return (
                 <NavFolder
@@ -248,7 +285,11 @@ export const WalkReactDir = ({
                     oid={oid}
                     currentslug={currentslug}
                     isCurrentOid={isCurrentOid}
-                />
+                    committer={committer}
+                    message={message}
+                >
+                    {content}
+                </NavFolder>
             );
         }
         return (
@@ -263,7 +304,9 @@ export const WalkReactDir = ({
                         ? 'current_pg'
                         : ''
                 }
-            />
+            >
+                {content}
+            </NavFrame>
         );
     });
 };
@@ -287,6 +330,7 @@ export const NavTimeline = ({
     const [isGreen, setIsGreen] = useState<boolean>(false);
     const [isRed, setIsRed] = useState<boolean>(false);
     const [isBlue, setIsBlue] = useState<boolean>(false);
+    const [isWhite, setIsWhite] = useState<boolean>(false);
     // const [navCurrent, setNavCurrent] = useState<number>(oidOrder[oid]);
 
     const dblHandle = (e: MouseEvent, isBack: boolean = true) => {
@@ -333,11 +377,36 @@ export const NavTimeline = ({
         // setNavCurrent(oidOrder[oid]);
     }, [oid, searchParams]);
 
+    const FilterButton = ({
+        className,
+        setIs,
+        pgName,
+    }: {
+        className: string;
+        setIs: Dispatch<SetStateAction<boolean>>;
+        pgName: ReactNode;
+    }) => {
+        return (
+            <button
+                className={`${className} textured_bg`}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    setIs((value) => !value);
+                }}
+            >
+                <span className="question_mark">
+                    <span>?</span>
+                </span>
+                <NavFrame className="instruction_hover" pgName={pgName} />
+            </button>
+        );
+    };
+
     return (
         <nav
             className={`${searchParams || ''} ${isBlue ? 'blue' : ''} ${
                 isGreen ? 'green' : ''
-            } ${isRed ? 'red' : ''}`}
+            } ${isRed ? 'red' : ''} ${isWhite ? 'white' : ''}`}
             onClick={() => {
                 router.push(pathname);
             }}
@@ -357,72 +426,57 @@ export const NavTimeline = ({
             <section className="timeline_nav">
                 <div>
                     <button
-                        className="back_twice textured_bg"
+                        className="back_twice"
                         onClick={(e) => dblHandle(e)}
-                    ></button>
+                    >
+                        <DoubleLeft />
+                    </button>
                     <button
-                        className="back textured_bg"
+                        className="back"
                         onClick={(e) => singleHandle(e, -1)}
-                    ></button>
+                    >
+                        <Left />
+                    </button>
                 </div>
                 <div>
                     <button
-                        className="forward textured_bg"
+                        className="forward"
                         onClick={(e) => singleHandle(e, 1)}
-                    ></button>
+                    >
+                        <Left />
+                    </button>
                     <button
-                        className="forward_twice textured_bg"
+                        className="forward_twice"
                         onClick={(e) => dblHandle(e, false)}
-                    ></button>
+                    >
+                        <DoubleLeft />
+                    </button>
                 </div>
             </section>
             {children}
             <section className="filter_nav">
-                <button
-                    className="blue textured_bg"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        setIsBlue((value) => !value);
-                    }}
-                >
-                    <span className="question_mark">
-                        <span>?</span>
-                    </span>
-                    <NavFrame
-                        className="instruction_hover"
-                        pgName={'blue means it is modified'}
-                    />
-                </button>
-                <button
-                    className="green textured_bg"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        setIsGreen((value) => !value);
-                    }}
-                >
-                    <span className="question_mark">
-                        <span>?</span>
-                    </span>
-                    <NavFrame
-                        className="instruction_hover"
-                        pgName={'green means it is added'}
-                    />
-                </button>
-                <button
-                    className="red textured_bg"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        setIsRed((value) => !value);
-                    }}
-                >
-                    <span className="question_mark">
-                        <span>?</span>
-                    </span>
-                    <NavFrame
-                        className="instruction_hover"
-                        pgName={'red means it is removed'}
-                    />
-                </button>
+                <FilterButton
+                    className={'white'}
+                    setIs={setIsWhite}
+                    pgName={
+                        'You can see all the past versions of this website here!'
+                    }
+                />
+                <FilterButton
+                    className={'blue'}
+                    setIs={setIsBlue}
+                    pgName={'blue polaroid means it is modified'}
+                />
+                <FilterButton
+                    className={'green'}
+                    setIs={setIsGreen}
+                    pgName={'green polaroid means it is added'}
+                />
+                <FilterButton
+                    className={'red'}
+                    setIs={setIsRed}
+                    pgName={'red polaroid means it is removed'}
+                />
             </section>
         </nav>
     );

@@ -25,6 +25,10 @@ const nextConfig = {
             exclude: /node_modules/,
             loader: 'graphql-raw-loader',
         });
+        config.module.rules.push({
+            test: /\.svg$/,
+            use: ['@svgr/webpack'],
+        });
 
         return config;
     },

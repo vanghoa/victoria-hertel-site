@@ -8,6 +8,7 @@ import { ScrollbarSize } from '@/components/Layout/ScrollbarSize';
 import SVGFilter from '@/components/Layout/SVGFilter';
 import bg from '@/components/Layout/pattern.png';
 import { CSSProperties } from 'react';
+import SVGPattern from '@/components/Layout/SVGPattern';
 
 const font = DM_Mono({
     weight: ['400', '500'],
@@ -37,6 +38,7 @@ export default async function RootLayout({
         >
             <body className={font.className}>
                 {/*<SVGFilter />*/}
+                <SVGPattern />
                 <ScrollbarSize />
                 <NavServer />
                 {children}

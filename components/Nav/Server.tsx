@@ -98,7 +98,10 @@ export const NavServer = async () => {
         committedDate: localDate(),
         oid: 'latest',
         tree: walkDirectory(),
-        message: 'this is the latest site! this is the latest site!',
+        message: 'this is the latest site!',
+        committer: {
+            name: 'Victoria Hertel Velasco',
+        },
     });
     const oidOrder = commitList.reduce(
         (acc, cur, index) => ((acc[cur.oid] = index), acc),

@@ -24,7 +24,7 @@
     }
 
     nav .current {
-        --nav_top_offset_original: 24rem;
+        --nav_top_offset_original: 14rem;
         --nav_gap: 0px;
         --left_offset_polaroid: 0rem;
     }
@@ -80,6 +80,11 @@
     nav:not(.open, .timeline) .nested.close > * {
         --nav_gap_offset: 0px;
     }
+
+    /* info */
+    nav .indicator .fulldate {
+        font-size: 1.2rem;
+    }
 }
 
 @media only screen and (max-width: 400px) {
@@ -87,9 +92,10 @@
         --nav_timeline_gap: 6rem;
     }
     nav .timeline_nav div:first-child {
-        flex-direction: column;
+        flex-direction: column-reverse;
     }
     nav .timeline_nav div {
-        flex-direction: column-reverse;
+        gap: 1rem;
+        flex-direction: column;
     }
 }
