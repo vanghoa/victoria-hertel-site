@@ -9,8 +9,9 @@
 }
 
 @media only screen and (max-width: 600px) {
+    html,
     body {
-        font-size: 10px;
+        font-size: 11px;
     }
     :root {
         --timeline_nav_p: 1rem;
@@ -85,17 +86,26 @@
     nav .indicator .fulldate {
         font-size: 1.2rem;
     }
+
+    /* timeline_nav */
+    nav .timeline_nav div {
+        gap: 1.2rem;
+    }
 }
 
 @media only screen and (max-width: 400px) {
     :root {
         --nav_timeline_gap: 6rem;
     }
+    /*
     nav .timeline_nav div:first-child {
         flex-direction: column-reverse;
     }
     nav .timeline_nav div {
         gap: 1rem;
         flex-direction: column;
+    }*/
+    nav .timeline_nav div button:is(.forward_twice, .back_twice) {
+        display: none;
     }
 }
