@@ -134,10 +134,15 @@ nav .column {
     transition: opacity 1s;
     opacity: 0;
     height: 100%;
-    overflow-x: hidden;
-    overflow-y: auto;
+    overflow: hidden;
     width: var(--nav_column_width);
     scrollbar-color: rgba(255, 255, 255, 0.7) transparent;
+}
+
+nav .column.current,
+nav.timeline .column {
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 nav .flexcolumn {
