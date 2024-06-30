@@ -1,0 +1,10 @@
+{
+    "files.exclude": {
+        "[^p]*": true,
+        "p[^u]*": true,
+        "pu[^b]*": true,
+        "pub[^l]*": true,
+        "publ[^i]*": true,
+        "publi[^c]*": true
+    }
+}

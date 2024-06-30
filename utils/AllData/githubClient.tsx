@@ -120,137 +120,146 @@ export const fetchPageContent = cache(
             return fileContent;
         }
         /* patch */
-        const paramsPairObj: Awaited<ReturnType<typeof fetchParamsPairObj>> =
-            await fetchGithub('fetchParamsPairObj');
-        const gitdata = paramsPairObj?.[oid || '']?.[slug || ''];
-        const { patch } = gitdata;
-        const fileContentArr = fileContent.split('\n');
-        const attr = (
-            value: 'added' | 'deleted'
-        ): {
-            type: 'mdxJsxAttribute';
-            name: 'status';
-            value: 'added' | 'deleted';
-        } => ({
-            type: 'mdxJsxAttribute',
-            name: 'status',
-            value,
-        });
-        const DiffParseContent = (content: string, attr: MdxJsxAttribute) => {
-            try {
-                const tree = fromMarkdown(content, {
-                    extensions: [mdxjs()],
-                    mdastExtensions: [mdxFromMarkdown()],
-                });
-                for (const eli in tree.children) {
-                    const el = tree.children[eli];
-                    const { type } = el;
-                    if (type == 'mdxJsxFlowElement') {
-                        el.attributes.push(attr);
-                    } else if ('children' in el) {
-                        let spancounter = 0;
-                        for (let el_i in el.children) {
-                            const { type: type_ } = el.children[el_i];
-                            if (type_ == 'mdxJsxTextElement') {
-                                el.children[
-                                    el_i // @ts-ignore
-                                ].attributes.push(attr);
-                            } else if (type_ == 'image') {
-                                el.children[el_i] = {
+        if (slug != 'home') {
+            const paramsPairObj: Awaited<
+                ReturnType<typeof fetchParamsPairObj>
+            > = await fetchGithub('fetchParamsPairObj');
+            const gitdata = paramsPairObj?.[oid || '']?.[slug || ''];
+            const { patch } = gitdata;
+            const fileContentArr = fileContent.split('\n');
+            const attr = (
+                value: 'added' | 'deleted'
+            ): {
+                type: 'mdxJsxAttribute';
+                name: 'status';
+                value: 'added' | 'deleted';
+            } => ({
+                type: 'mdxJsxAttribute',
+                name: 'status',
+                value,
+            });
+            const DiffParseContent = (
+                content: string,
+                attr: MdxJsxAttribute
+            ) => {
+                try {
+                    const tree = fromMarkdown(content, {
+                        extensions: [mdxjs()],
+                        mdastExtensions: [mdxFromMarkdown()],
+                    });
+                    for (const eli in tree.children) {
+                        const el = tree.children[eli];
+                        const { type } = el;
+                        if (type == 'mdxJsxFlowElement') {
+                            el.attributes.push(attr);
+                        } else if ('children' in el) {
+                            let spancounter = 0;
+                            for (let el_i in el.children) {
+                                const { type: type_ } = el.children[el_i];
+                                if (type_ == 'mdxJsxTextElement') {
+                                    el.children[
+                                        el_i // @ts-ignore
+                                    ].attributes.push(attr);
+                                } else if (type_ == 'image') {
+                                    el.children[el_i] = {
+                                        type: 'mdxJsxTextElement',
+                                        name: 'Image',
+                                        attributes: [
+                                            {
+                                                type: 'mdxJsxAttribute',
+                                                name: 'src',
+                                                value: el.children[
+                                                    el_i // @ts-ignore
+                                                ].url,
+                                            },
+                                            {
+                                                type: 'mdxJsxAttribute',
+                                                name: 'alt',
+                                                value: el.children[
+                                                    el_i // @ts-ignore
+                                                ].alt,
+                                            },
+                                            attr,
+                                        ],
+                                        children: [],
+                                    };
+                                } else {
+                                    spancounter++;
+                                    el.children[el_i] = {
+                                        type: 'mdxJsxTextElement',
+                                        name: 'Span',
+                                        attributes: [attr],
+                                        children: [
+                                            // @ts-ignore
+                                            el.children[el_i],
+                                        ],
+                                        position: el.children[el_i].position,
+                                    };
+                                }
+                            }
+                            if (
+                                spancounter == el.children.length &&
+                                type == 'paragraph'
+                            ) {
+                                tree.children[eli] = {
                                     type: 'mdxJsxTextElement',
-                                    name: 'Image',
-                                    attributes: [
-                                        {
-                                            type: 'mdxJsxAttribute',
-                                            name: 'src',
-                                            value: el.children[
-                                                el_i // @ts-ignore
-                                            ].url,
-                                        },
-                                        {
-                                            type: 'mdxJsxAttribute',
-                                            name: 'alt',
-                                            value: el.children[
-                                                el_i // @ts-ignore
-                                            ].alt,
-                                        },
-                                        attr,
-                                    ],
-                                    children: [],
-                                };
-                            } else {
-                                spancounter++;
-                                el.children[el_i] = {
-                                    type: 'mdxJsxTextElement',
-                                    name: 'Span',
-                                    attributes: [attr],
-                                    children: [
-                                        // @ts-ignore
-                                        el.children[el_i],
-                                    ],
-                                    position: el.children[el_i].position,
+                                    name: 'P',
+                                    attributes: [attr], // @ts-ignore
+                                    children: el.children,
+                                    position: el.position,
                                 };
                             }
                         }
-                        if (
-                            spancounter == el.children.length &&
-                            type == 'paragraph'
-                        ) {
-                            tree.children[eli] = {
-                                type: 'mdxJsxTextElement',
-                                name: 'P',
-                                attributes: [attr], // @ts-ignore
-                                children: el.children,
-                                position: el.position,
-                            };
+                    }
+                    const out = toMarkdown(tree, {
+                        extensions: [mdxToMarkdown()],
+                    });
+                    console.log('parse success');
+                    return out;
+                } catch (error) {
+                    console.log(error);
+                }
+            };
+            for (const chunk of patch) {
+                if (chunk.type == 'Chunk') {
+                    const changes = chunk.changes;
+                    for (const change of changes) {
+                        if (change.type == 'AddedLine') {
+                            const { lineAfter, content } = change;
+                            const index = lineAfter - 1;
+                            if (fileContentArr[index] == content) {
+                                const out = DiffParseContent(
+                                    content,
+                                    attr('added')
+                                );
+                                out && (fileContentArr[index] = out);
+                            }
                         }
                     }
                 }
-                const out = toMarkdown(tree, {
-                    extensions: [mdxToMarkdown()],
-                });
-                console.log('parse success');
-                return out;
-            } catch (error) {
-                console.log(error);
             }
-        };
-        for (const chunk of patch) {
-            if (chunk.type == 'Chunk') {
-                const changes = chunk.changes;
-                for (const change of changes) {
-                    if (change.type == 'AddedLine') {
-                        const { lineAfter, content } = change;
-                        const index = lineAfter - 1;
-                        if (fileContentArr[index] == content) {
+            let index_offset = 0;
+            for (const chunk of patch) {
+                if (chunk.type == 'Chunk') {
+                    const changes = chunk.changes;
+                    for (const change of changes) {
+                        if (change.type == 'DeletedLine') {
+                            const { lineBefore, content } = change;
+                            const index = lineBefore + index_offset - 1;
                             const out = DiffParseContent(
                                 content,
-                                attr('added')
+                                attr('deleted')
                             );
-                            out && (fileContentArr[index] = out);
+                            if (out != undefined) {
+                                fileContentArr.splice(index, 0, out);
+                                index_offset++;
+                            }
                         }
                     }
                 }
             }
+            fileContent = fileContentArr.join('\n');
         }
-        let index_offset = 0;
-        for (const chunk of patch) {
-            if (chunk.type == 'Chunk') {
-                const changes = chunk.changes;
-                for (const change of changes) {
-                    if (change.type == 'DeletedLine') {
-                        const { lineBefore, content } = change;
-                        const index = lineBefore + index_offset - 1;
-                        const out = DiffParseContent(content, attr('deleted'));
-                        if (out != undefined) {
-                            fileContentArr.splice(index, 0, out);
-                            index_offset++;
-                        }
-                    }
-                }
-            }
-        }
-        fileContent = fileContentArr.join('\n');
         /* */
 
         const fileMatter = matter(fileContent);
