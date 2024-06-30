@@ -1,0 +1,64 @@
+# Hello, this is how you can edit your website!
+
+# Here is the folder structure with explanation:
+public/
+├─ assets/ (store all images here to use in the site)
+│ ├─ image.png
+│ ├─ ...
+├─ content/ (store markdown files, the file/folder structure inside is reflected through the polaroid navigation sidebar shown on the site)
+│ ├─ page.mdx
+│ ├─ ...
+├─ instruction.mdx (this file)
+
+# Add a new page?
+    - Create a markdown file with a .mdx extension inside the pubclic/content/ folder (e.g newsite.mdx). The file name will be the page name.
+
+# Test the site?
+    - Open the terminal with [shortcut Ctrl + ` (backtick)] or [Terminal > New Terminal]
+    - Type 'npm run dev' and press 'Return'
+    - Wait a bit and open the test site on http://localhost:3000
+
+# markdown formatted text sheet
+    - Basic text format
+    # h1
+    ## h2
+    ### h3
+    #### h4
+    ##### h5
+    ###### h6
+    paragraph
+    **bold text**
+
+    - Line Break
+    <br/>
+
+    - An external link
+    [link text example](www.examplelink.com)
+
+    - Image (images have to be put inside the public/assets/ folder)
+    ![alt text image](/link/to/local/image.png)
+
+    - Video (has to be either Youtube or Vimeo url)
+    <Video src="https://vimeo.com/example" />
+
+    - Grid & Column
+    <Grid> 
+        <Col>content inside first column</Col>
+        <Col>content inside second column</Col>
+        <Col>...</Col>
+    </Grid>
+
+    - Slideshow, Home page only (put the images url into the src param array)
+    <SlideShow src={['/core/2.jpg', '/times/4.jpg', '/scent/4.jpg', '/drop/1.jpg']}/>
+
+# meta.json
+    - The file meta.json inside public/content is to determine the metadata of each of the page.mdx in the public/content folder
+    - Currently, there are:
+        - "order" : to determine the order of the page displayed on the polaroid navigation sidebar
+
+# commit & push changes to the final production site
+    - Go to SOURCE CONTROL sidebar in vscode with [shortcut Ctrl + Shift + G]
+    - Type the commit messages into the message box
+    - Select the ⌄ (down arrow) button next to the 'Commit' button, then select 'Commit & Push'
+    - If there's any popup dialog, just select 'Yes' or 'Always'
+    - Wait 5-10 minutes to see the changes on the live site
