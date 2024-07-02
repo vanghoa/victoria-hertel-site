@@ -2,6 +2,16 @@
     display: none;
 }
 
+@media only screen and (min-width: 1000px) {
+    :root {
+        --nav_left_offset: 1rem;
+    }
+    html,
+    body {
+        font-size: 13px;
+    }
+}
+
 @media only screen and (max-width: 800px) {
     :root {
         --nav_left_offset: -5rem;

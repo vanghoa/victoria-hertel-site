@@ -31,7 +31,10 @@ export default function PageServer({
         <main className={`textured_bg ${status}`}>
             {homepage ? children : <PageClient>{children}</PageClient>}
             <section className="description">
-                <span className="left">{pgName}</span>
+                <span className="left">
+                    {' '}
+                    Victoria Hertel&apos;s website | {pgName}
+                </span>
                 <span className="right">{date}</span>
             </section>
         </main>

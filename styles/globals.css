@@ -23,6 +23,7 @@
     --scrollbar_width: 0px;
     --background_url: url('/');
     --frame_description_h: 2.5rem;
+    --text_color: rgb(53, 51, 47);
 }
 
 * {
@@ -31,7 +32,8 @@
     margin: 0;
     position: relative;
     text-decoration: none;
-    color: black;
+    color: var(--text_color);
+    text-shadow: -0.04em 0 0.05em #ffffff, 0.02em 0 0.05em #a2a2a2;
     list-style-type: none;
     border: none;
 }
@@ -312,7 +314,7 @@ nav .info * {
 }
 
 nav .indicator {
-    color: black;
+    color: var(--text_color);
     font-weight: 500;
     opacity: 0.3;
     width: fit-content;
@@ -327,7 +329,7 @@ nav .indicator {
 }
 
 nav .indicator .time {
-    color: black;
+    color: var(--text_color);
     font-style: italic;
     line-height: 1.2rem;
     font-weight: 300;
@@ -338,7 +340,7 @@ nav .column.latest .indicator .time::after {
 }
 
 nav .indicator .fulldate {
-    color: black;
+    color: var(--text_color);
     font-size: 1.5rem;
 }
 
@@ -534,6 +536,15 @@ nav:not(.timeline) .current .nested.removed :is(.nested, .polaroid).removed {
 nav .column:not(.current) .timestamp {
     --nav_gap_offset: var(--nav_gap);
     opacity: 0;
+}
+
+nav .timestamp .outer .description {
+    height: fit-content;
+    min-height: var(--frame_description_h);
+}
+
+span.underline {
+    text-decoration: underline;
 }
 
 nav:not(.timeline) .column.current {

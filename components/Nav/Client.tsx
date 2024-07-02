@@ -122,8 +122,14 @@ export const NavColumn = ({
                     }}
                     pgName={
                         <>
-                            {committedDate.date}
-                            <br></br> at {committedDate.time}
+                            version committed <br></br> on{' '}
+                            <span className="underline">
+                                {committedDate.date}
+                            </span>{' '}
+                            <br></br> at{' '}
+                            <span className="underline">
+                                {committedDate.time}
+                            </span>
                         </>
                     }
                 />
