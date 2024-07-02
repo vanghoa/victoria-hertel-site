@@ -129,7 +129,8 @@ export const NavColumn = ({
                             <br></br> at{' '}
                             <span className="underline">
                                 {committedDate.time}
-                            </span>
+                            </span>{' '}
+                            {oid == 'latest' ? '(latest) ' : ''}
                         </>
                     }
                 />

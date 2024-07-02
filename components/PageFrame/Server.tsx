@@ -16,15 +16,17 @@ import { AnyChunk } from 'parse-git-diff';
 
 export default function PageServer({
     children,
-    pgName = 'Victoria Hertel Velasco',
+    pgName = 'vhertel',
     date = 'XX/XX/XXXX',
     homepage = false,
+    slug,
     status = '',
 }: {
     children: ReactNode;
     pgName?: string | ReactNode;
     date?: string | ReactNode;
     homepage?: boolean;
+    slug: string;
     status?: string;
 }) {
     return (
@@ -33,9 +35,11 @@ export default function PageServer({
             <section className="description">
                 <span className="left">
                     {' '}
-                    Victoria Hertel&apos;s website | {pgName}
+                    Victoria Hertel&apos;s website \ {pgName}
                 </span>
-                <span className="right">{date}</span>
+                <span className="right">
+                    {date == 'latest' ? 'latest version' : date}
+                </span>
             </section>
         </main>
     );
@@ -43,7 +47,7 @@ export default function PageServer({
 
 export function PageError({ children }: { children?: ReactNode }) {
     return (
-        <PageServer>
+        <PageServer pgName="error" date="error" slug="error">
             <h1 className="text-plane">
                 {children ? children : 'some error...'}
             </h1>

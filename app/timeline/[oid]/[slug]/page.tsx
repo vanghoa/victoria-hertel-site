@@ -57,6 +57,7 @@ export default async function Page({
             }
             homepage={slug === 'home'}
             status={status}
+            slug={slug}
         >
             {asyncMDXContent}
         </PageServer>

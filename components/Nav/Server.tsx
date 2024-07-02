@@ -100,7 +100,7 @@ export const NavServer = async () => {
         tree: walkDirectory(),
         message: 'this is the latest site!',
         committer: {
-            name: 'Victoria Hertel Velasco',
+            name: 'vhertel',
         },
     });
     const oidOrder = commitList.reduce(
