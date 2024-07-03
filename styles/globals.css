@@ -23,7 +23,7 @@
     --scrollbar_width: 0px;
     --background_url: url('/');
     --frame_description_h: 2.5rem;
-    --text_color: rgb(53, 51, 47);
+    --off_black: rgb(53, 51, 47);
 }
 
 * {
@@ -32,7 +32,7 @@
     margin: 0;
     position: relative;
     text-decoration: none;
-    color: var(--text_color);
+    color: var(--off_black);
     text-shadow: -0.04em 0 0.05em #ffffff, 0.02em 0 0.05em #a2a2a2;
     list-style-type: none;
     border: none;
@@ -314,7 +314,7 @@ nav .info * {
 }
 
 nav .indicator {
-    color: var(--text_color);
+    color: var(--off_black);
     font-weight: 500;
     opacity: 0.3;
     width: fit-content;
@@ -329,7 +329,7 @@ nav .indicator {
 }
 
 nav .indicator .time {
-    color: var(--text_color);
+    color: var(--off_black);
     font-style: italic;
     line-height: 1.2rem;
     font-weight: 300;
@@ -340,7 +340,7 @@ nav .column.latest .indicator .time::after {
 }
 
 nav .indicator .fulldate {
-    color: var(--text_color);
+    color: var(--off_black);
     font-size: 1.5rem;
 }
 
@@ -407,6 +407,7 @@ nav .timeline_nav div button:is(.forward, .forward_twice) svg {
 
 /* filter nav */
 nav .filter_nav {
+    z-index: 9;
     top: unset;
     bottom: 0px;
     min-height: 9rem;
@@ -419,6 +420,24 @@ nav .filter_nav {
         rgba(0, 0, 0, 0.7) 0%,
         rgba(0, 0, 0, 0.5) 40%,
         rgba(0, 0, 0, 0) 100%
+    );
+}
+
+nav .filter_nav::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 100vh;
+    pointer-events: none;
+    background: linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0.5) 0%,
+        rgba(0, 0, 0, 0) 30%,
+        rgba(0, 0, 0, 0) 70%,
+        rgba(0, 0, 0, 0.5) 100%
     );
 }
 
@@ -665,10 +684,15 @@ main:is(.added, .renamed) #page_section {
 
 /* home page */
 
+#page_section.init #page_frame.homepage {
+    background-color: transparent;
+}
+
 #page_frame.homepage {
     width: 100%;
     padding: 0;
     overflow: hidden;
+    background-color: black;
 }
 
 #page_frame.homepage #content {
@@ -687,19 +711,16 @@ main:is(.added, .renamed) #page_section {
     top: 0;
     justify-content: center;
     align-items: center;
-    padding: 3rem;
 }
 
 #page_frame.homepage #content > .home-plane {
     opacity: 1;
 }
 
-#page_frame.homepage #content > * > * {
+#page_frame.homepage #content .imageWrapper {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    max-width: 800px;
-    max-height: calc(
-        80vh - var(--padding_polaroid) * 3 - var(--frame_description_h)
-    );
+    min-width: 100%;
+    min-height: 100%;
 }

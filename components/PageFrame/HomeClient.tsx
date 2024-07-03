@@ -2,7 +2,14 @@
 import { pixelationhome } from '@/utils/constants/others';
 import { blurPixelatedFs, fs, vs } from '@/utils/Curtains/shader';
 import { Curtains, Plane, ShaderPass } from 'curtainsjs';
-import { SetStateAction, useEffect, useRef, useState } from 'react';
+import {
+    Fragment,
+    SetStateAction,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
 import Image from 'next/image';
 import { ISizeCalculationResult } from 'image-size/dist/types/interface';
 import PageVisibility, { usePageVisibility } from 'react-page-visibility';
@@ -22,6 +29,7 @@ export const HomePageClient = ({
     const curtainsRef = useRef<Curtains | null>(null);
     const [FrameClass, setFrameClass] = useState('init');
     const [current, setCurrent] = useState(0);
+    const filteredSlideshow = useFilterSlideShow({ slideshow });
 
     const StopInterval = () => {
         curtainsRef.current && curtainsRef.current.dispose();
@@ -110,7 +118,7 @@ export const HomePageClient = ({
                                 curtainsRef.current.dispose();
                             curtainsRef.current = null;
                             setCurrent((cur) => {
-                                if (cur >= slideshow.length - 1) {
+                                if (cur >= filteredSlideshow.length - 1) {
                                     return 0;
                                 } else {
                                     return cur + 1;
@@ -252,7 +260,7 @@ export const HomePageClient = ({
                 <div id="page_frame" className={`homepage`}>
                     <div ref={canvasRef} id="canvas"></div>
                     <div ref={contentRef} id="content">
-                        {slideshow.map((slide, i) => {
+                        {filteredSlideshow.map((slide, i) => {
                             const width = slide.size.width || 0;
                             const height = slide.size.height || 0;
                             return (
@@ -267,15 +275,16 @@ export const HomePageClient = ({
                                             aspectRatio: ` ${width} / ${height}`,
                                             ...{
                                                 [width > height
-                                                    ? 'maxHeight'
-                                                    : 'maxWidth']: 'unset',
+                                                    ? 'minHeight'
+                                                    : 'minWidth']: 'unset',
                                             },
                                         }}
+                                        className={`imageWrapper`}
                                     >
                                         <Image
                                             src={`/assets${slide.src}`}
                                             alt="image slideshow"
-                                            sizes="(max-width: 800px) 100vw, 800px"
+                                            sizes="100vw"
                                             fill={true}
                                             crossOrigin=""
                                             data-sampler="planeTexture"
@@ -346,4 +355,42 @@ const onAfterResize = (
             Math.ceil(curtainsBBox.height / pixelationhome.pixel_unit),
         ];
     };
+};
+
+const useFilterSlideShow = ({
+    slideshow,
+}: {
+    slideshow: {
+        src: string;
+        size: ISizeCalculationResult;
+    }[];
+}) => {
+    const [sizeChange, setSizeChange] = useState(innerWidth > innerHeight);
+    const filterSlideshow = useMemo(() => filterSlideShowFunc(), [sizeChange]);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setSizeChange(innerWidth > innerHeight);
+        };
+
+        window.addEventListener('resize', handleResize);
+
+        // Clean up the event listener when the component unmounts
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
+    function filterSlideShowFunc() {
+        const isVerticalScreen = innerWidth < innerHeight;
+        const newSlideshow = slideshow.filter((slide) => {
+            const width = slide.size.width || 0;
+            const height = slide.size.height || 0;
+            return isVerticalScreen == width < height;
+        });
+        console.log('calculate');
+        return newSlideshow;
+    }
+
+    return filterSlideshow;
 };

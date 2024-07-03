@@ -13,29 +13,35 @@ import { compile, run } from '@mdx-js/mdx';
 import * as runtime from 'react/jsx-runtime';
 import React from 'react';
 import { AnyChunk } from 'parse-git-diff';
+import { contentpath } from '@/utils/constants/paths';
 
 export default function PageServer({
     children,
     pgName = 'vhertel',
     date = 'XX/XX/XXXX',
     homepage = false,
-    slug,
+    path,
     status = '',
 }: {
     children: ReactNode;
     pgName?: string | ReactNode;
     date?: string | ReactNode;
     homepage?: boolean;
-    slug: string;
+    path: string;
     status?: string;
 }) {
+    let pathstring = path.replace(contentpath, '').replaceAll('/', ` \\ `);
+    pathstring = pathstring.endsWith('.mdx')
+        ? pathstring.slice(0, -4)
+        : pathstring;
     return (
         <main className={`textured_bg ${status}`}>
             {homepage ? children : <PageClient>{children}</PageClient>}
             <section className="description">
                 <span className="left">
                     {' '}
-                    Victoria Hertel&apos;s website \ {pgName}
+                    Victoria Hertel&apos;s website
+                    {pathstring}
                 </span>
                 <span className="right">
                     {date == 'latest' ? 'latest version' : date}
@@ -47,7 +53,7 @@ export default function PageServer({
 
 export function PageError({ children }: { children?: ReactNode }) {
     return (
-        <PageServer pgName="error" date="error" slug="error">
+        <PageServer pgName="error" date="error" path="error">
             <h1 className="text-plane">
                 {children ? children : 'some error...'}
             </h1>

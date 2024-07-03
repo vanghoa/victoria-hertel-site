@@ -40,7 +40,7 @@ export default async function Page({
             pgName={data.name}
             date={'latest'}
             homepage={slug === 'home'}
-            slug={slug}
+            path={data.path}
         >
             {/* <Mdx/> */}
             {asyncMDXContent}
