@@ -8,14 +8,14 @@ import {
     useEffect,
     useMemo,
     useRef,
-    useState,
+    useState
 } from 'react';
 import Image from 'next/image';
 import { ISizeCalculationResult } from 'image-size/dist/types/interface';
 import PageVisibility, { usePageVisibility } from 'react-page-visibility';
 
 export const HomePageClient = ({
-    slideshow,
+    slideshow
 }: {
     slideshow: {
         src: string;
@@ -57,7 +57,7 @@ export const HomePageClient = ({
             let curtainsBBox = curtainsRef.current.getBoundingRect();
             const resUnit = [
                 Math.ceil(curtainsBBox.width / pixelationhome.pixel_unit),
-                Math.ceil(curtainsBBox.height / pixelationhome.pixel_unit),
+                Math.ceil(curtainsBBox.height / pixelationhome.pixel_unit)
             ];
             const pixelationPass = new ShaderPass(curtainsRef.current, {
                 fragmentShader: blurPixelatedFs,
@@ -65,29 +65,29 @@ export const HomePageClient = ({
                     granularity: {
                         name: 'uGranularity',
                         type: '1f',
-                        value: 1,
+                        value: 1
                     },
                     resolution: {
                         name: 'uResolution',
                         type: '2f',
-                        value: [curtainsBBox.width, curtainsBBox.height],
+                        value: [curtainsBBox.width, curtainsBBox.height]
                     },
                     resUnit: {
                         name: 'uResUnit',
                         type: '2f',
-                        value: [resUnit[0], resUnit[1]],
+                        value: [resUnit[0], resUnit[1]]
                     },
                     time: {
                         name: 'uTime',
                         type: '1f',
-                        value: resUnit[0] * resUnit[1],
+                        value: resUnit[0] * resUnit[1]
                     },
                     step: {
                         name: 'uStep',
                         type: '1f',
-                        value: 1,
-                    },
-                },
+                        value: 1
+                    }
+                }
             });
             pixelationPass
                 .onRender(() => {
@@ -185,12 +185,12 @@ export const HomePageClient = ({
                     granularity: {
                         name: 'uGranularity',
                         type: '1f',
-                        value: pixelationhome.max,
+                        value: pixelationhome.max
                     },
                     resolution: {
                         name: 'uResolution',
                         type: '2f',
-                        value: [curtainsBBox.width, curtainsBBox.height],
+                        value: [curtainsBBox.width, curtainsBBox.height]
                     },
                     resUnit: {
                         name: 'uResUnit',
@@ -201,20 +201,20 @@ export const HomePageClient = ({
                             ),
                             Math.ceil(
                                 curtainsBBox.height / pixelationhome.pixel_unit
-                            ),
-                        ],
+                            )
+                        ]
                     },
                     time: {
                         name: 'uTime',
                         type: '1f',
-                        value: 0,
+                        value: 0
                     },
                     step: {
                         name: 'uStep',
                         type: '1f',
-                        value: pixelationhome.step,
-                    },
-                },
+                        value: pixelationhome.step
+                    }
+                }
             });
             pixelationPass
                 .onRender(() => {
@@ -259,7 +259,7 @@ export const HomePageClient = ({
             <section id="page_section" className={`image ${FrameClass}`}>
                 <div id="page_frame" className={`homepage`}>
                     <div ref={canvasRef} id="canvas"></div>
-                    <div ref={contentRef} id="content">
+                    <div ref={contentRef} id="content" suppressHydrationWarning>
                         {filteredSlideshow.map((slide, i) => {
                             const width = slide.size.width || 0;
                             const height = slide.size.height || 0;
@@ -269,6 +269,7 @@ export const HomePageClient = ({
                                     className={`${
                                         i == current ? 'home-plane' : ''
                                     }`}
+                                    suppressHydrationWarning
                                 >
                                     <div
                                         style={{
@@ -276,10 +277,11 @@ export const HomePageClient = ({
                                             ...{
                                                 [width > height
                                                     ? 'minHeight'
-                                                    : 'minWidth']: 'unset',
-                                            },
+                                                    : 'minWidth']: 'unset'
+                                            }
                                         }}
                                         className={`imageWrapper`}
+                                        suppressHydrationWarning
                                     >
                                         <Image
                                             src={`/assets${slide.src}`}
@@ -289,6 +291,7 @@ export const HomePageClient = ({
                                             crossOrigin=""
                                             data-sampler="planeTexture"
                                             priority
+                                            suppressHydrationWarning
                                         />
                                     </div>
                                 </div>
@@ -316,12 +319,12 @@ const curtainGeneration = (
             window.devicePixelRatio > 1 ? pixelationhome.quality : 0.3,
         premultipliedAlpha: true,
         watchScroll: false,
-        depth: false,
+        depth: false
     });
     curtains.onSuccess(async () => {
         const fonts = {
             list: ['normal 400 1em Arial, Helvetica, sans-serif'],
-            loaded: 0,
+            loaded: 0
         };
         const plane =
             mediaEl &&
@@ -331,7 +334,7 @@ const curtainGeneration = (
                 widthSegments: 25,
                 heightSegments: 25,
                 transparent: true,
-                depthTest: false,
+                depthTest: false
             });
         setFrameClass('');
         return;
@@ -348,30 +351,34 @@ const onAfterResize = (
         const curtainsBBox = curtains.getBoundingRect();
         pixelationPass.uniforms.resolution.value = [
             curtainsBBox.width,
-            curtainsBBox.height,
+            curtainsBBox.height
         ];
         pixelationPass.uniforms.resUnit.value = [
             Math.ceil(curtainsBBox.width / pixelationhome.pixel_unit),
-            Math.ceil(curtainsBBox.height / pixelationhome.pixel_unit),
+            Math.ceil(curtainsBBox.height / pixelationhome.pixel_unit)
         ];
     };
 };
 
 const useFilterSlideShow = ({
-    slideshow,
+    slideshow
 }: {
     slideshow: {
         src: string;
         size: ISizeCalculationResult;
     }[];
 }) => {
-    const [sizeChange, setSizeChange] = useState(innerWidth > innerHeight);
-    const filterSlideshow = useMemo(() => filterSlideShowFunc(), [sizeChange]);
-
+    const [sizeChange, setSizeChange] = useState<0 | boolean>(0);
+    const effectInnerWidth = useRef(0);
+    const effectInnerHeight = useRef(0);
     useEffect(() => {
         const handleResize = () => {
             setSizeChange(innerWidth > innerHeight);
+            effectInnerWidth.current = innerWidth;
+            effectInnerHeight.current = innerHeight;
         };
+        effectInnerWidth.current = innerWidth;
+        effectInnerHeight.current = innerHeight;
 
         window.addEventListener('resize', handleResize);
 
@@ -380,9 +387,11 @@ const useFilterSlideShow = ({
             window.removeEventListener('resize', handleResize);
         };
     }, []);
+    const filterSlideshow = useMemo(() => filterSlideShowFunc(), [sizeChange]);
 
     function filterSlideShowFunc() {
-        const isVerticalScreen = innerWidth < innerHeight;
+        const isVerticalScreen =
+            effectInnerWidth.current < effectInnerHeight.current;
         const newSlideshow = slideshow.filter((slide) => {
             const width = slide.size.width || 0;
             const height = slide.size.height || 0;
