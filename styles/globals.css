@@ -103,6 +103,14 @@ body {
     flex-grow: 1;
 }
 
+:is(main, .polaroid .outer) .description .right {
+    text-align: right;
+}
+
+:is(main, .polaroid .outer) .description .left br {
+    display: none;
+}
+
 /* Nav */
 nav {
     position: fixed;

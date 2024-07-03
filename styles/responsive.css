@@ -101,6 +101,10 @@
     nav .timeline_nav div {
         gap: 1.2rem;
     }
+
+    :is(main, .polaroid .outer) .description .left br {
+        display: inline;
+    }
 }
 
 @media only screen and (max-width: 400px) {
