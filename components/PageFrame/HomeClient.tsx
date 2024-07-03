@@ -368,7 +368,7 @@ const useFilterSlideShow = ({
         size: ISizeCalculationResult;
     }[];
 }) => {
-    const [sizeChange, setSizeChange] = useState<0 | boolean>(0);
+    const [sizeChange, setSizeChange] = useState<number | boolean>(0);
     const effectInnerWidth = useRef(0);
     const effectInnerHeight = useRef(0);
     useEffect(() => {
@@ -379,6 +379,7 @@ const useFilterSlideShow = ({
         };
         effectInnerWidth.current = innerWidth;
         effectInnerHeight.current = innerHeight;
+        setSizeChange(1);
 
         window.addEventListener('resize', handleResize);
 
