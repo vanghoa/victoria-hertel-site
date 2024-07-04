@@ -19,13 +19,13 @@ export const MDXCustomComponents: MDXComponents = {
             width: '100%',
             height: '100%',
             controls: true,
-            playsinline: true,
+            playsinline: true
         };
 
         return (
             <figure
                 style={{
-                    aspectRatio: `${width} / ${height}`,
+                    aspectRatio: `${width} / ${height}`
                 }}
                 className={`videowrapper media-plane ${status || ''}`}
             >
@@ -161,14 +161,22 @@ export const MDXCustomComponents: MDXComponents = {
             );
         } else if (typeof children == 'string') {
             return <li className="text-plane">{children}</li>;
+        } else if (typeof children == 'object') {
+            // @ts-ignore
+            if (children?.type == 'a') {
+                return <li className="text-plane">{children}</li>;
+            }
         }
         return <li>{children}</li>;
     },
+    pre: ({ children }) => {
+        return <code className="text-plane">{children}</code>;
+    }
 };
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
     return {
         ...MDXCustomComponents,
-        ...components,
+        ...components
     };
 }
