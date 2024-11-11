@@ -46,7 +46,7 @@
         @media screen and (max-width: 500px) {
             flex-direction: column;
             .col ul:last-child {
-                margin-bottom: 0px;
+                margin-bottom: 0px; //
             }
         }
         .col {
