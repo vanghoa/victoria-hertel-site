@@ -8,9 +8,10 @@ export async function GET(request: NextRequest) {
         revalidateTag('fetchNavData');
         revalidateTag('fetchPageCommitDetails');
         revalidateTag('fetchParamsPairObj');
+        console.log('revalidate success');
         return NextResponse.json({
             revalidated: true,
-            now: Date.now(),
+            now: Date.now()
         });
     } catch (e) {
         console.log('revalidatetag (error): ', e);
