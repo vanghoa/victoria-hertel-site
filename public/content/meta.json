@@ -12,22 +12,43 @@
         "portfolio": {
             "order": 3,
             "entries": {
-                "core, 2021": {
+                "Bell, 2021": {
+                    "order": 10
+                },
+                "Core, 2021": {
+                    "order": 9
+                },
+                "Drop, 2022": {
+                    "order": 8
+                },
+                "Steps, 2022": {
+                    "order": 7
+                },
+                "Scent, 2022": {
+                    "order": 6
+                },
+                "Times, 2023": {
+                    "order": 5
+                },
+                "Nocturne, 2023": {
                     "order": 4
                 },
-                "drop, 2022": {
+                "Sacrificial Protection, 2023": {
                     "order": 3
                 },
-                "scent, 2022": {
+                "Tides, 2024": {
                     "order": 2
                 },
-                "steps, 2022": {
+                "bioCurrents, 2024": {
                     "order": 1
                 },
-                "times, 2023": {
+                "darkmode, 2025": {
                     "order": 0
                 }
             }
+        },
+        "writings & teaching": {
+            "order": 4
         }
     }
 }

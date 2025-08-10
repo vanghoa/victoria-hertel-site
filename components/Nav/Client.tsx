@@ -214,7 +214,7 @@ const NavFolder = ({
     message: string;
     children?: ReactNode;
 }) => {
-    const [isClose, setIsClose] = useState(false);
+    const [isClose, setIsClose] = useState(true);
     return (
         <div
             className={`nested ${tree[treekey].status} ${
