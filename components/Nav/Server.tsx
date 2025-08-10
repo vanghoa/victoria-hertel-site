@@ -38,17 +38,18 @@ export const walkDirectory = (
     // need cache
     // console.log('refetch walkdirectory');
     let dir = fs.readdirSync(path);
-    console.log(pagemeta);
     for (let i = 0; i < dir.length; i++) {
         let name = dir[i];
         let target = path + '/' + name;
         let stats = fs.statSync(target);
         const isMD = name.endsWith('.md');
         const isMDX = name.endsWith('.mdx');
-        console.log(name);
 
         if (stats.isFile() && (isMD || isMDX)) {
+            console.log(name);
             name = name.slice(0, isMD ? -3 : -4);
+            console.log(name);
+            console.log(pagemeta[name]?.order || 'concac');
             obj[name] = {
                 type: 'page',
                 status: 'latest',
