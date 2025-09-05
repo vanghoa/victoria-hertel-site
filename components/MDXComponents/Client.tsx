@@ -1,9 +1,8 @@
 'use client';
 import dynamic from 'next/dynamic';
-import { JSX, useState } from 'react';
-import { VimeoPlayerProps } from 'react-player/vimeo';
-import { YouTubePlayerProps } from 'react-player/youtube';
+import { useState } from 'react';
 import { Fallback } from './Server';
+import Image from 'next/image';
 const ReactPlayerYoutube = dynamic(() => import('react-player/youtube'), {
     ssr: false,
 });
@@ -17,8 +16,12 @@ export const ReactPlayer = ({
     width,
     height,
     thumbnail,
+    localthumbnail,
     status,
 }: any) => {
+    function onPlay() {
+        setStart(true);
+    }
     const params = {
         url: src,
         className: 'video',
@@ -26,9 +29,7 @@ export const ReactPlayer = ({
         height: '100%',
         controls: true,
         playsinline: true,
-        onPlay: () => {
-            setStart(true);
-        },
+        onPlay,
     };
     const [start, setStart] = useState(false);
 
@@ -46,11 +47,22 @@ export const ReactPlayer = ({
                             <path d="M43.5 20.4378C48.1667 23.1321 48.1667 29.8679 43.5 32.5622L11.25 51.1817C6.58333 53.876 0.749997 50.5081 0.749998 45.1195L0.749999 7.88045C0.749999 2.49185 6.58333 -0.876027 11.25 1.81827L43.5 20.4378Z" />
                         </svg>
                     </div>
-                    <img
-                        src={thumbnail}
-                        crossOrigin=""
-                        data-sampler="planeTexture"
-                    />
+                    {localthumbnail ? (
+                        <Image
+                            src={localthumbnail}
+                            alt={`thumbnail`}
+                            fill={true}
+                            crossOrigin=""
+                            data-sampler="planeTexture"
+                            sizes="(max-width: 800px) 100vw, 800px"
+                        />
+                    ) : (
+                        <img
+                            src={thumbnail}
+                            crossOrigin=""
+                            data-sampler="planeTexture"
+                        />
+                    )}
                 </div>
             )}
             {(() => {
@@ -60,6 +72,18 @@ export const ReactPlayer = ({
                         break;
                     case 'vimeo':
                         return <ReactPlayerVimeo {...params} />;
+                        break;
+                    case 'googleapi':
+                        return (
+                            <video
+                                className="video"
+                                style={{ width: '100%', height: '100%' }}
+                                controls
+                                onPlay={onPlay}
+                            >
+                                <source src={src} type="video/mp4"></source>
+                            </video>
+                        );
                         break;
                     default:
                         return <Fallback>something is wrong</Fallback>;

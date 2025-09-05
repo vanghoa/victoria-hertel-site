@@ -126,6 +126,7 @@
         z-index: 2;
         &.start {
             z-index: 0;
+            visibility: hidden;
         }
     }
 
