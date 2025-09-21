@@ -1,7 +1,7 @@
 import type { MDXComponents } from 'mdx/types';
 import Image from 'next/image';
 import { ReactPlayer } from './components/MDXComponents/Client';
-import { Fallback } from './components/MDXComponents/Server';
+import { ContactCard, Fallback } from './components/MDXComponents/Server';
 import { HomePageClient } from './components/PageFrame/HomeClient';
 import { ISizeCalculationResult } from 'image-size/dist/types/interface';
 import React from 'react';
@@ -62,6 +62,10 @@ export const MDXCustomComponents: MDXComponents = {
             </figure>
         );
     },
+    Divider: () => {
+        return <div className={`divider media-plane`}></div>;
+    },
+    ContactCard: ({ children }) => <ContactCard>{children}</ContactCard>,
     h1: ({ children }) => <h1 className="text-plane">{children}</h1>,
     h2: ({ children }) => <h2 className="text-plane">{children}</h2>,
     h3: ({ children }) => <h3 className="text-plane">{children}</h3>,
