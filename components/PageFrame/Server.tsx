@@ -4,7 +4,7 @@ import { MDXCustomComponents } from '@/mdx-components';
 import rehypeImageSize from '@/utils/rehype-image-size.mjs';
 import rehypeSlideShow from '@/utils/rehype-slideshow.mjs';
 import rehypeVideoValidate, {
-    asyncRehypeVideoValidate
+    asyncRehypeVideoValidate,
 } from '@/utils/rehype-video-validate.mjs';
 import rehypeSpanValidate from '@/utils/rehype-span-validate.mjs';
 import { MDXRemote, MDXRemoteProps } from 'next-mdx-remote/rsc';
@@ -21,7 +21,7 @@ export default function PageServer({
     date = 'XX/XX/XXXX',
     homepage = false,
     path,
-    status = ''
+    status = '',
 }: {
     children: ReactNode;
     pgName?: string | ReactNode;
@@ -35,7 +35,11 @@ export default function PageServer({
         ? pathstring.slice(0, -4)
         : pathstring;
     return (
-        <main className={`textured_bg ${status}`}>
+        <main
+            className={`textured_bg ${status} ${
+                date == 'latest' ? 'latest' : ''
+            }`}
+        >
             {homepage ? children : <PageClient>{children}</PageClient>}
             <section className="description">
                 <span className="left">
@@ -63,7 +67,7 @@ export function PageError({ children }: { children?: ReactNode }) {
 
 export async function MDXContent({
     source,
-    compileMDX
+    compileMDX,
 }: {
     source: string;
     compileMDX?: string;
@@ -80,7 +84,7 @@ export async function MDXContent({
     const { default: MDX } = await run(code, {
         Fragment: undefined,
         ...runtime,
-        baseUrl: import.meta.url
+        baseUrl: import.meta.url,
     });
 
     return <MDX components={{ ...MDXCustomComponents }} />;
@@ -93,8 +97,8 @@ export async function MDXContent({
             options={{
                 mdxOptions: {
                     rehypePlugins: [[rehypeImageSize, { root: process.cwd() }]],
-                    remarkPlugins: [remarkUnwrapImages]
-                }
+                    remarkPlugins: [remarkUnwrapImages],
+                },
             }}
         />
     );
@@ -107,8 +111,8 @@ export const CompileMDXFunc = async (source: string) => {
             [rehypeImageSize, { root: process.cwd() }],
             asyncRehypeVideoValidate,
             rehypeSpanValidate,
-            [rehypeSlideShow, { root: process.cwd() }]
+            [rehypeSlideShow, { root: process.cwd() }],
         ],
-        remarkPlugins: [remarkUnwrapImages]
+        remarkPlugins: [remarkUnwrapImages],
     });
 };

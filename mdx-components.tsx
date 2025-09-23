@@ -49,7 +49,9 @@ export const MDXCustomComponents: MDXComponents = {
         return (
             <figure
                 style={{ aspectRatio: `${width} / ${height}` }}
-                className={`media-plane ${status || ''}`}
+                className={`media-plane ${status || ''} ${
+                    width > height ? 'hor' : 'ver'
+                }`}
             >
                 <Image
                     src={`/assets${src}`}
@@ -91,7 +93,7 @@ export const MDXCustomComponents: MDXComponents = {
         return (
             <figure
                 style={{ aspectRatio: `${width} / ${height}` }}
-                className="media-plane"
+                className={`media-plane ${width > height ? 'hor' : 'ver'}`}
             >
                 <Image
                     src={`/assets${src}`}

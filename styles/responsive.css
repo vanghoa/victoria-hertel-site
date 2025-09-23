@@ -18,6 +18,13 @@
     }
 }
 
+@media only screen and (min-width: 601px) {
+    nav .column.current,
+    nav.timeline .column {
+        pointer-events: auto;
+    }
+}
+
 @media only screen and (max-width: 600px) {
     html,
     body {
@@ -111,6 +118,9 @@
 
     :is(main, .polaroid .outer) .description .left br {
         display: inline;
+    }
+    main.latest .description .right {
+        max-width: 5rem;
     }
 }
 

@@ -39,7 +39,9 @@ export const ReactPlayer = ({
             style={{
                 aspectRatio: `${width} / ${height}`,
             }}
-            className={`videowrapper media-plane ${status || ''}`}
+            className={`videowrapper media-plane ${status || ''} ${
+                width > height ? 'hor' : 'ver'
+            }`}
         >
             {thumbnail && (
                 <div
