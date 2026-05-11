@@ -1,67 +1,24 @@
 import type { MDXComponents } from 'mdx/types';
 import Image from 'next/image';
-import { Vimeo, Youtube } from './components/MDXComponents/Client';
-import { Fallback } from './components/MDXComponents/Server';
+import { ReactPlayer } from './components/MDXComponents/Client';
+import { ContactCard, Fallback } from './components/MDXComponents/Server';
 import { HomePageClient } from './components/PageFrame/HomeClient';
 import { ISizeCalculationResult } from 'image-size/dist/types/interface';
+import React from 'react';
 
 export const MDXCustomComponents: MDXComponents = {
     Grid({ children }) {
         return <section className="grid">{children}</section>;
     },
     Col({ children, status }) {
-        return <div className={`col ${status || ''}`}>{children}</div>;
-    },
-    Video({ src, type, width, height, thumbnail, status }) {
-        const params = {
-            url: src,
-            className: 'video',
-            width: '100%',
-            height: '100%',
-            controls: true,
-            playsinline: true
-        };
-
         return (
-            <figure
-                style={{
-                    aspectRatio: `${width} / ${height}`
-                }}
-                className={`videowrapper media-plane ${status || ''}`}
-            >
-                {(() => {
-                    switch (type) {
-                        case 'youtube':
-                            return (
-                                <>
-                                    <img
-                                        src={thumbnail}
-                                        crossOrigin=""
-                                        data-sampler="planeTexture"
-                                    />
-                                    <Youtube {...params} />
-                                </>
-                            );
-                            break;
-                        case 'vimeo':
-                            return (
-                                <>
-                                    <img
-                                        src={thumbnail}
-                                        crossOrigin=""
-                                        data-sampler="planeTexture"
-                                    />
-                                    <Vimeo {...params} />
-                                </>
-                            );
-                            break;
-                        default:
-                            return <Fallback>something is wrong</Fallback>;
-                            break;
-                    }
-                })()}
-            </figure>
+            <div className={`col ${status || ''}`}>
+                {splitChildrenByBr(children)}
+            </div>
         );
+    },
+    Video(params) {
+        return <ReactPlayer {...params} />;
     },
     SlideShow({ slideshow }: { slideshow: string }) {
         return <HomePageClient slideshow={JSON.parse(slideshow)} />;
@@ -92,7 +49,9 @@ export const MDXCustomComponents: MDXComponents = {
         return (
             <figure
                 style={{ aspectRatio: `${width} / ${height}` }}
-                className={`media-plane ${status || ''}`}
+                className={`media-plane ${status || ''} ${
+                    width > height ? 'hor' : 'ver'
+                }`}
             >
                 <Image
                     src={`/assets${src}`}
@@ -105,6 +64,10 @@ export const MDXCustomComponents: MDXComponents = {
             </figure>
         );
     },
+    Divider: () => {
+        return <div className={`divider media-plane`}></div>;
+    },
+    ContactCard: ({ children }) => <ContactCard>{children}</ContactCard>,
     h1: ({ children }) => <h1 className="text-plane">{children}</h1>,
     h2: ({ children }) => <h2 className="text-plane">{children}</h2>,
     h3: ({ children }) => <h3 className="text-plane">{children}</h3>,
@@ -130,7 +93,7 @@ export const MDXCustomComponents: MDXComponents = {
         return (
             <figure
                 style={{ aspectRatio: `${width} / ${height}` }}
-                className="media-plane"
+                className={`media-plane ${width > height ? 'hor' : 'ver'}`}
             >
                 <Image
                     src={`/assets${src}`}
@@ -171,12 +134,54 @@ export const MDXCustomComponents: MDXComponents = {
     },
     pre: ({ children }) => {
         return <code className="text-plane">{children}</code>;
-    }
+    },
 };
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
     return {
         ...MDXCustomComponents,
-        ...components
+        ...components,
     };
+}
+
+function splitChildrenByBr(children: React.ReactNode) {
+    const result: React.ReactNode[][] = [];
+    let currentGroup: React.ReactNode[] = [];
+
+    const processChild = (child: React.ReactNode) => {
+        if (child === null || child === undefined || typeof child === 'boolean')
+            return;
+
+        if (Array.isArray(child)) {
+            child.forEach(processChild);
+        } else if (
+            React.isValidElement(child) &&
+            (child.type === 'br' ||
+                (typeof child.type === 'string' &&
+                    child.type.toLowerCase() === 'br'))
+        ) {
+            // On <br />, push current group to result and start a new one
+            if (currentGroup.length > 0) {
+                result.push(currentGroup);
+                currentGroup = [];
+            }
+        } else {
+            currentGroup.push(child);
+        }
+    };
+
+    processChild(children);
+
+    if (currentGroup.length > 0) {
+        result.push(currentGroup);
+    }
+
+    // Wrap each group with <p>
+    return result.length > 1
+        ? result.map((group, index) => (
+              <p className="text-plane" key={index}>
+                  {group}
+              </p>
+          ))
+        : children;
 }

@@ -46,7 +46,10 @@ export const walkDirectory = (
         const isMDX = name.endsWith('.mdx');
 
         if (stats.isFile() && (isMD || isMDX)) {
+            //console.log(name);
             name = name.slice(0, isMD ? -3 : -4);
+            //console.log(name);
+            //console.log(pagemeta[name]?.order || 'concac');
             obj[name] = {
                 type: 'page',
                 status: 'latest',

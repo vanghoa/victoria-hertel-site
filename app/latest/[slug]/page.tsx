@@ -1,10 +1,6 @@
 import { walkDirectory } from '@/components/Nav/Server';
 import PageServer, { MDXContent } from '@/components/PageFrame/Server';
-import { contentpath } from '@/utils/constants/paths';
-import dynamic from 'next/dynamic';
 import fs from 'fs';
-import { MDXCustomComponents } from '@/mdx-components';
-import { MDXRemote } from 'next-mdx-remote/rsc';
 import matter from 'gray-matter';
 
 export const dynamicParams = false;

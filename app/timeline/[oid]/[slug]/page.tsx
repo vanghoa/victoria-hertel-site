@@ -56,12 +56,11 @@ export async function generateStaticParams() {
     const paramsArray: { oid: string; slug: string }[] = [];
 
     for (const commit of commitList) {
-        const {
-            oid,
-            file: {
-                object: { entries }
-            }
-        } = commit;
+        const oid = commit?.oid;
+        const entries = commit?.file?.object?.entries;
+        if (!oid || !entries) {
+            continue;
+        }
         formatNavData(entries, {}, ({ slug }: { slug: string }) => {
             paramsArray.push({ oid, slug });
         });
